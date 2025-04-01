@@ -1,0 +1,1196 @@
+/* --- Глобальные переменные и сброс --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* Цветовая палитра */
+    --primary-gradient: linear-gradient(60deg, #f95f62, #ff0050, #ff0050, #00f2ea);
+    --primary-accent: #ff0050;
+    --secondary-accent: #00f2ea;
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    --bg-main: #f7fafc;
+    --bg-card: #ffffff;
+    --border-color: #e2e8f0;
+    --shadow-color-soft: rgba(45, 55, 72, 0.08);
+    --shadow-color-medium: rgba(45, 55, 72, 0.12);
+
+    /* Типографика */
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+    /* Размеры и отступы */
+    --border-radius-medium: 12px;
+    --border-radius-large: 16px;
+    --padding-standard: 20px;
+    --padding-large: 30px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Основные стили Body --- */
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.7;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 40px 15px;
+    overflow-x: hidden;
+    /* Предотвратить горизонтальный скролл body */
+}
+
+/* --- Контейнер (Общий стиль для всех контейнеров) --- */
+.container {
+    max-width: 850px;
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--padding-large) 40px;
+    background-color: var(--bg-card);
+    box-shadow: 0 12px 35px var(--shadow-color-soft);
+    border-radius: var(--border-radius-large);
+}
+
+/* --- Хедер --- */
+header {
+    text-align: center;
+    margin-bottom: 50px;
+    padding-bottom: 35px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: transparent;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    letter-spacing: -1px;
+}
+
+header p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+
+/* --- Заголовки секций (H2) --- */
+.faq h2,
+#table h2 {
+    /* Убрали #slides h2 */
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 35px;
+    text-align: center;
+    padding-bottom: 15px;
+    position: relative;
+    border-bottom: none;
+}
+
+.faq h2::after,
+#table h2::after {
+    /* Убрали #slides h2::after */
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--primary-gradient);
+    border-radius: 2px;
+}
+
+/* --- Кнопки --- */
+button,
+.modal-button {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.25s ease-out;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    margin: 8px 5px;
+    letter-spacing: 0.5px;
+}
+
+/* Основная кнопка (Градиент) */
+#startButton,
+#haveFileButton,
+.modal-button[href],
+/* #tableButton, */
+/* Удалено */
+#showSlideshowButton,
+#downloadButton {
+    /* Если будет */
+    background: var(--primary-gradient);
+    background-size: 150% 150%;
+    color: white;
+    box-shadow: 0 5px 15px var(--shadow-color-soft);
+}
+
+#startButton:hover,
+#haveFileButton:hover,
+.modal-button[href]:hover,
+/* #tableButton:hover, */
+/* Удалено */
+#showSlideshowButton:hover,
+#downloadButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px var(--shadow-color-medium);
+    background-position: right center;
+}
+
+/* Второстепенная кнопка (Светлая) */
+.secondary-button,
+.modal-button:not([href]),
+/* #backToSlidesButton, */
+/* Удалено */
+#demoButton,
+#resetButton {
+    background-color: #EDF2F7;
+    color: var(--text-secondary);
+    box-shadow: none;
+    border: 1px solid transparent;
+}
+
+.secondary-button:hover,
+.modal-button:not([href]):hover,
+/* #backToSlidesButton:hover, */
+/* Удалено */
+#demoButton:hover,
+#resetButton:hover {
+    background-color: #E2E8F0;
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px var(--shadow-color-soft);
+}
+
+#startButton {
+    display: inline-block;
+    /* Изменено для ряда с демо */
+    margin: 0;
+    font-size: 1.1rem;
+    padding: 14px 35px;
+}
+
+#demoButton {
+    font-size: 1.1rem;
+    padding: 14px 35px;
+}
+
+
+/* --- Модальные окна --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: var(--bg-card);
+    margin: 8% auto;
+    padding: 35px 40px;
+    border-radius: var(--border-radius-medium);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    max-width: 680px;
+    width: 90%;
+    position: relative;
+    text-align: center;
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-25px);
+        opacity: 0.5;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: var(--text-primary);
+}
+
+.modal p,
+.modal ol {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.modal ol {
+    padding-left: 25px;
+    list-style-position: outside;
+}
+
+.modal li {
+    margin-bottom: 10px;
+}
+
+.modal p strong {
+    color: var(--primary-accent);
+    font-weight: 600;
+}
+
+.modal p code {
+    background-color: #edf2f7;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.modal-button-container {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* --- Область загрузки --- */
+.year-select-container {
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.year-select-container label {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+#yearSelect {
+    padding: 9px 14px;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    cursor: pointer;
+    min-width: 110px;
+    font-family: var(--font-main);
+    color: var(--text-primary);
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234A5568'%3E%3Cpath d='M8 11.5a.75.75 0 0 1-.53-.22l-4-4a.75.75 0 1 1 1.06-1.06L8 9.69l3.47-3.47a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-.53.22z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px 16px;
+    padding-right: 35px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#yearSelect:focus {
+    outline: none;
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(255, 0, 80, 0.15);
+}
+
+#yearSelect::-ms-expand {
+    display: none;
+}
+
+.upload-area {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--border-radius-medium);
+    padding: 45px var(--padding-standard);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    background-color: var(--bg-main);
+}
+
+.upload-area:hover,
+.upload-area.dragover {
+    border-color: var(--primary-accent);
+    background-color: #FFF5F7;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 2.8rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.upload-area:hover .upload-icon,
+.upload-area.dragover .upload-icon {
+    color: var(--primary-accent);
+}
+
+.upload-label {
+    display: block;
+    font-size: 1rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.upload-label span {
+    display: block;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+#uploadStatus {
+    margin-top: 20px;
+    font-weight: 500;
+    padding: 12px 15px;
+    border-radius: 8px;
+    display: none;
+    animation: fadeIn 0.3s;
+}
+
+#uploadStatus.status-loading {
+    display: block;
+    color: #2b6cb0;
+    background-color: #ebf8ff;
+}
+
+#uploadStatus.status-error {
+    display: block;
+    color: #c53030;
+    background-color: #fff5f5;
+}
+
+#uploadStatus.status-success {
+    display: block;
+    color: #2f855a;
+    background-color: #f0fff4;
+}
+
+/* --- Аккордеон (FAQ) --- */
+.faq {
+    margin: 60px 0;
+}
+
+.accordion {
+    width: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-medium);
+    overflow: hidden;
+}
+
+.accordion-item {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.accordion-item:last-child {
+    border-bottom: none;
+}
+
+.accordion-header {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 18px var(--padding-large);
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: background-color 0.2s ease;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600;
+}
+
+.accordion-header:hover {
+    background-color: var(--bg-main);
+}
+
+.accordion-header i {
+    color: var(--text-muted);
+    transition: transform 0.3s ease, color 0.3s ease;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-left: 15px;
+}
+
+.accordion-item.active .accordion-header i {
+    transform: rotate(45deg);
+    color: var(--primary-accent);
+}
+
+.accordion-content {
+    padding: 0 var(--padding-large);
+    background-color: var(--bg-main);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.accordion-item.active .accordion-content {
+    padding: var(--padding-standard) var(--padding-large);
+    max-height: 600px;
+}
+
+.accordion-content p {
+    margin-bottom: 10px;
+}
+
+.accordion-content p:last-child {
+    margin-bottom: 0;
+}
+
+.accordion-content strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* --- Экран готовности --- */
+.ready-screen-container {
+    text-align: center;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    /* display: none; управляется JS */
+}
+
+.ready-screen-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ready-content h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    border: none;
+    padding: 0;
+}
+
+.ready-content h2::after {
+    display: none;
+}
+
+.ready-content p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 35px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ready-icon {
+    font-size: 4rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 25px;
+    display: inline-block;
+}
+
+#showSlideshowButton i {
+    margin-left: 8px;
+    transition: transform 0.2s ease;
+}
+
+#showSlideshowButton:hover i {
+    transform: translateX(4px);
+}
+
+/* --- Полноэкранное слайд-шоу --- */
+#fullscreenSlideshow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #111;
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+    cursor: default;
+    /* display: none; управляется JS */
+}
+
+#fullscreenSlideshow.visible {
+    opacity: 1;
+}
+
+.fs-slides-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+}
+
+.fs-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px;
+    color: #fff;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out, visibility 0s 0.6s;
+    cursor: default;
+}
+
+.fs-slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+    transition: opacity 0.6s ease-in, transform 0.6s ease-in, visibility 0s 0s;
+}
+
+.fs-slide.exiting {
+    opacity: 0;
+    transform: scale(1.05);
+    transition: opacity 0.5s ease-in, transform 0.5s ease-in, visibility 0s 0.5s;
+}
+
+.fs-slide .fs-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 15px;
+    animation: fadeInText 0.8s 0.3s ease-out backwards;
+}
+
+.fs-slide .fs-value {
+    font-size: 6rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 15px;
+    color: transparent;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    padding: 5px 0;
+    animation: fadeInText 0.8s 0.5s ease-out backwards;
+}
+
+.fs-slide .fs-value.counting {
+    color: #fff;
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+}
+
+.fs-slide .fs-label {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    max-width: 700px;
+    animation: fadeInText 0.8s 0.7s ease-out backwards;
+}
+
+.fs-slide .fs-details {
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.6);
+    max-width: 600px;
+    animation: fadeInText 0.8s 0.9s ease-out backwards;
+}
+
+@keyframes fadeInText {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Кнопка закрытия - КРУГЛАЯ */
+.close-fs-button {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    background: rgba(255, 255, 255, 0.15);
+    /* Чуть заметнее */
+    color: rgba(255, 255, 255, 0.8);
+    /* Ярче иконка */
+    border: none;
+    /* Круглая форма */
+    border-radius: 50%;
+    width: 45px;
+    /* Одинаковая ширина и высота */
+    height: 45px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 2010;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+}
+
+.close-fs-button:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    transform: scale(1.1) rotate(90deg);
+    /* Добавим вращение для эффекта */
+}
+
+/* Прогресс бар */
+.fs-progress-bar-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: rgba(255, 255, 255, 0.15);
+    z-index: 2005;
+}
+
+.fs-progress-bar {
+    width: 0%;
+    height: 100%;
+    background: var(--primary-gradient);
+    /* transition управляется JS для перезапуска */
+}
+
+/* --- Контейнер с основными результатами (#mainResults) --- */
+#mainResults {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    /* display: none; управляется JS */
+}
+
+#mainResults.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Секция #slides и связанные стили УДАЛЕНЫ */
+
+/* --- Таблица (внутри #mainResults) --- */
+#table {
+    margin: 0;
+}
+
+#table h2 {
+    margin-bottom: 30px;
+}
+
+#table p {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+#table p #tableYear {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-medium);
+    box-shadow: 0 4px 15px var(--shadow-color-soft);
+    margin-bottom: 35px;
+}
+
+#statsTable {
+    width: 100%;
+    /* УБРАЛИ min-width, чтобы разрешить перенос */
+    /* min-width: 600px; */
+    border-collapse: collapse;
+    table-layout: fixed;
+    /* ВАЖНО для переноса */
+}
+
+#statsTable th,
+#statsTable td {
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 20px;
+    text-align: left;
+    vertical-align: middle;
+    /* Свойства для переноса текста */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    /* Совместимость */
+    white-space: normal;
+    /* Убедиться, что не nowrap */
+}
+
+#statsTable tr:last-child th,
+#statsTable tr:last-child td {
+    border-bottom: none;
+}
+
+#statsTable thead th {
+    background-color: var(--bg-main);
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom-width: 2px;
+    border-color: var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+/* Задаем ширину колонок */
+#statsTable thead th:nth-child(1),
+#statsTable tbody th {
+    width: 45%;
+    /* Ширина колонки параметра */
+}
+
+#statsTable thead th:nth-child(2),
+#statsTable tbody td {
+    width: 55%;
+    /* Ширина колонки значения */
+}
+
+.group-header td {
+    background-color: #E9EDF5;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+    border-top: 1px solid var(--border-color);
+    position: sticky;
+    top: 48px;
+    /* Примерная высота thead th */
+    z-index: 4;
+}
+
+#statsTable tbody tr.group-header:first-child td {
+    border-top: none;
+}
+
+#statsTable tbody th {
+    /* Название параметра */
+    background-color: var(--bg-card);
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+#statsTable tbody td {
+    /* Значение */
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    /* word-break уже задан выше */
+    font-weight: 500;
+}
+
+#statsTable tbody td a {
+    color: var(--primary-accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+#statsTable tbody td a:hover {
+    color: var(--secondary-accent);
+    text-decoration: underline;
+}
+
+#statsTable tbody tr:not(.group-header):hover th,
+#statsTable tbody tr:not(.group-header):hover td {
+    background-color: var(--bg-main);
+}
+
+#resetButton {
+    display: block;
+    margin: 25px auto;
+}
+
+/* --- SEO-текст и футер --- */
+.seo-text {
+    margin-top: 60px;
+    margin-bottom: 40px;
+    line-height: 1.8;
+    padding-top: 40px;
+    border-top: 1px solid var(--border-color);
+}
+
+.seo-text h2,
+.seo-text h3 {
+    text-align: left;
+    border-bottom: none;
+    display: block;
+    position: static;
+    transform: none;
+    color: var(--text-primary);
+    margin-bottom: 15px;
+}
+
+.seo-text h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.seo-text h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 30px;
+}
+
+.seo-text h2::after,
+.seo-text h3::after {
+    display: none;
+}
+
+.seo-text p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 18px;
+}
+
+.seo-text ul {
+    list-style: none;
+    margin: 0 0 20px 0;
+    padding-left: 0;
+}
+
+.seo-text li {
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    padding-left: 25px;
+    position: relative;
+}
+
+.seo-text li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 1px;
+    color: var(--secondary-accent);
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.seo-text strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.seo-text em {
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+footer {
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--text-muted);
+    margin-top: 50px;
+    padding-top: 25px;
+    border-top: 1px solid var(--border-color);
+}
+
+footer p {
+    line-height: 1.5;
+}
+
+/* --- Адаптивность --- */
+@media (max-width: 900px) {
+    .container {
+        padding: var(--padding-large) 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 25px 10px;
+    }
+
+    .container {
+        padding: var(--padding-standard) 20px;
+        border-radius: var(--border-radius-medium);
+    }
+
+    h1 {
+        font-size: 2.3rem;
+    }
+
+    header p {
+        font-size: 1rem;
+    }
+
+    .faq h2,
+    #table h2 {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 12% auto;
+        padding: 30px 25px;
+    }
+
+    .modal h2 {
+        font-size: 1.5rem;
+    }
+
+    .upload-area {
+        padding: 40px var(--padding-standard);
+    }
+
+    .upload-icon {
+        font-size: 2.5rem;
+    }
+
+    /* Полноэкранное шоу */
+    .fs-slide .fs-value {
+        font-size: 4.5rem;
+    }
+
+    .fs-slide .fs-label {
+        font-size: 1.2rem;
+    }
+
+    .fs-slide .fs-title {
+        font-size: 1.1rem;
+    }
+
+    .close-fs-button {
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    /* Таблица */
+    #statsTable th,
+    #statsTable td {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+
+    .group-header td {
+        font-size: 0.95rem;
+    }
+
+    #statsTable thead th {
+        top: -1px;
+    }
+
+    .group-header td {
+        top: 44px;
+        /* Примерно */
+    }
+
+    /* SEO */
+    .seo-text h2 {
+        font-size: 1.3rem;
+    }
+
+    .seo-text h3 {
+        font-size: 1.1rem;
+    }
+
+    .seo-text p,
+    .seo-text li {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 15px 5px;
+    }
+
+    .container {
+        padding: var(--padding-standard) 15px;
+        border-radius: 10px;
+    }
+
+    h1 {
+        font-size: 2rem;
+        letter-spacing: -0.5px;
+    }
+
+    header p {
+        font-size: 0.95rem;
+    }
+
+    .header-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button,
+    .modal-button {
+        font-size: 0.95rem;
+        padding: 12px 25px;
+    }
+
+    #startButton,
+    #demoButton {
+        width: 100%;
+        max-width: 300px;
+        margin: 5px auto;
+    }
+
+    .year-select-container {
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+    }
+
+    #yearSelect {
+        width: 100%;
+        text-align: center;
+        background-position: right 15px center;
+    }
+
+    /* Полноэкранное шоу */
+    .fs-slide .fs-value {
+        font-size: 3.5rem;
+    }
+
+    .fs-slide .fs-label {
+        font-size: 1rem;
+    }
+
+    .fs-slide .fs-title {
+        font-size: 0.9rem;
+    }
+
+    .close-fs-button {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+
+    /* Кнопка закрытия */
+    .ready-content h2 {
+        font-size: 1.8rem;
+    }
+
+    .ready-content p {
+        font-size: 1rem;
+    }
+
+    /* Таблица - разрешаем перенос, убираем min-width */
+    .table-responsive-wrapper {
+        overflow-x: visible;
+        border: none;
+        box-shadow: none;
+    }
+
+    #statsTable th,
+    #statsTable td {
+        font-size: 0.9rem;
+        padding: 10px 8px;
+    }
+
+    /* Меньше паддинг */
+    #statsTable thead th {
+        top: -1px;
+    }
+
+    .group-header td {
+        top: 40px;
+        /* Примерно */
+    }
+
+    /* Убираем явную ширину колонок, чтобы браузер сам подбирал */
+    #statsTable thead th:nth-child(1),
+    #statsTable tbody th {
+        width: auto;
+    }
+
+    #statsTable thead th:nth-child(2),
+    #statsTable tbody td {
+        width: auto;
+    }
+
+    /* SEO */
+    .seo-text {
+        margin-top: 40px;
+        padding-top: 30px;
+    }
+
+    .seo-text p,
+    .seo-text li {
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Твоя статистика TikTok - Узнай итоги своей активности за год</title>
+    <meta name="description"
+        content="Подведите итоги года в TikTok! Узнайте, сколько видео вы посмотрели, сколько лайков поставили, и другую интересную статистику. Загрузите свои данные и получите персональный отчет по вашей статистике TikTok.">
+    <meta name="keywords"
+        content="TikTok, статистика, итоги года, данные, анализ, просмотры, лайки, комментарии, скачать, бесплатно, активность, отчет, демо, поделиться">
+
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Скрипты -->
+    <!-- html2canvas для генерации картинки -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- JSZip для работы с ZIP архивами -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+        integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Ваш основной скрипт -->
+    <script defer src="script.js"></script>
+
+    <!-- JSON-LD Schema для FAQ -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [{
+            "@type": "Question",
+            "name": "Что такое 'Твоя статистика TikTok'?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "'Твоя статистика TikTok' - это неофициальный инструмент, который позволяет вам проанализировать вашу активность в TikTok, используя файл с данными, который можно скачать из TikTok."
+            }
+          }, {
+            "@type": "Question",
+            "name": "Как скачать данные из TikTok?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Откройте приложение TikTok и перейдите в свой профиль. Нажмите на кнопку меню (☰) в правом верхнем углу. Выберите \"Настройки и конфиденциальность\" → \"Аккаунт\" → \"Скачать данные\". Следуйте инструкциям на экране, выберите формат файла JSON и запросите данные. TikTok подготовит файл (это может занять несколько дней) и уведомит вас, когда он будет готов к скачиванию."
+            }
+          },
+           {
+            "@type": "Question",
+            "name": "Почему нужно ждать файл от TikTok?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "TikTok собирает большой объем данных о вашей активности. Подготовка полного архива требует времени на их серверах. Обычно это занимает от 24 до 72 часов, но иногда может быть дольше."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Безопасно ли загружать сюда мой файл?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Да, абсолютно безопасно. Вся обработка вашего файла происходит исключительно в вашем браузере на вашем устройстве. Ваши данные никуда не загружаются и не передаются на наши или какие-либо другие серверы. Мы не храним вашу информацию. Кроме того, сам файл данных от TikTok не содержит вашего пароля."
+            }
+          },
+           {
+            "@type": "Question",
+            "name": "Какие данные анализируются?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Мы анализируем историю просмотров видео, лайки, комментарии, репосты и просмотренные Live-трансляции (если эта информация доступна в вашем файле данных) за выбранный год."
+            }
+           },
+           {
+            "@type": "Question",
+            "name": "Почему некоторые цифры кажутся неточными?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Точность статистики зависит от полноты данных в предоставленном вами файле от TikTok. Иногда TikTok может предоставлять неполные данные или использовать специфические форматы дат/времени. Мы стараемся интерпретировать данные максимально корректно, но небольшие расхождения возможны. Например, точное время просмотра каждого видео не предоставляется, поэтому общее время просмотра является оценкой."
+            }
+           },
+           {
+            "@type": "Question",
+            "name": "Это официальный сервис от TikTok?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Нет, это неофициальный проект, созданный независимыми разработчиками для развлечения и анализа данных. Он не связан с компанией TikTok или ByteDance."
+            }
+          }]
+        }
+    </script>
+</head>
+
+<body>
+    <!-- Контейнер для основного контента (до результатов) -->
+    <div id="mainContent" class="container">
+        <header>
+            <h1>Твоя статистика TikTok</h1>
+            <p>Получите персональный отчет о вашей активности в TikTok за год!</p>
+            <div class="header-buttons">
+                <button id="startButton" aria-label="Начать анализ">Начать анализ</button>
+                <button id="demoButton" class="secondary-button" aria-label="Посмотреть демо">Посмотреть демо</button>
+            </div>
+        </header>
+
+        <!-- Модальные окна для загрузки файла -->
+        <div class="modal" id="howToModal" aria-labelledby="howToModalTitle" role="dialog" aria-modal="true">
+            <div class="modal-content">
+                <h2 id="howToModalTitle">Как получить данные из TikTok</h2>
+                <p>Чтобы получить статистику, вам нужно скачать файл с данными из TikTok в формате
+                    <strong>JSON</strong>. Вот как это сделать:
+                </p>
+                <ol>
+                    <li>Откройте приложение TikTok и перейдите в свой профиль.</li>
+                    <li>Нажмите на кнопку меню (☰) в правом верхнем углу.</li>
+                    <li>Выберите "Настройки и конфиденциальность".</li>
+                    <li>Перейдите в раздел "Аккаунт", затем "Скачать данные".</li>
+                    <li>Выберите формат файла <strong>JSON</strong> и нажмите "Запросить данные".</li>
+                    <li><strong>Важно:</strong> TikTok может готовить файл <strong>несколько дней</strong>. Вы получите
+                        уведомление в приложении, когда файл будет готов к скачиванию. Скачайте его (обычно это
+                        ZIP-архив, содержащий JSON).</li>
+                </ol>
+                <div class="modal-button-container">
+                    <a href="https://www.tiktok.com/setting/download-your-data" target="_blank"
+                        rel="noopener noreferrer" class="modal-button">Перейти к скачиванию на TikTok</a>
+                    <button class="modal-button secondary-button" id="haveFileButton">У меня уже есть файл</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal" id="selectFileModal" aria-labelledby="selectFileModalTitle" role="dialog" aria-modal="true">
+            <div class="modal-content">
+                <h2 id="selectFileModalTitle">Загрузите файл с данными TikTok</h2>
+                <p>Ваши данные обрабатываются <strong>локально в вашем браузере</strong> и никуда не отправляются. Это
+                    абсолютно <strong>безопасно</strong>.</p>
+                <p>Поддерживаются форматы <code>.zip</code> (скачанный из TikTok) или <code>.json</code> (если вы
+                    распаковали архив).</p>
+                <div class="year-select-container">
+                    <label for="yearSelect">Статистика за год:</label>
+                    <select id="yearSelect" name="year">
+                        <!-- Годы добавляются динамически из JavaScript -->
+                    </select>
+                </div>
+                <div class="upload-area" id="uploadArea" role="button" tabindex="0"
+                    aria-label="Загрузить файл данных TikTok">
+                    <label for="zipFileInput" class="upload-label">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <span id="uploadText">Нажмите или перетащите сюда файл<br>(.zip или .json)</span>
+                        <input type="file" id="zipFileInput" accept=".zip, application/zip, .json, application/json"
+                            style="display: none;">
+                    </label>
+                </div>
+                <div id="uploadStatus" role="status" aria-live="polite"></div>
+            </div>
+        </div>
+
+        <!-- Секция FAQ -->
+        <section class="faq" aria-label="Часто задаваемые вопросы">
+            <h2>Часто задаваемые вопросы</h2>
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">Что такое "Твоя статистика TikTok"? <i
+                            class="fas fa-plus"></i></button>
+                    <div class="accordion-content">
+                        <p>"Твоя статистика TikTok" - это <strong>неофициальный</strong> инструмент, созданный
+                            энтузиастами. Он позволяет вам проанализировать вашу активность в TikTok за выбранный год,
+                            используя файл с данными, который можно скачать непосредственно из настроек вашего аккаунта
+                            TikTok.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">Как скачать данные из TikTok? <i
+                            class="fas fa-plus"></i></button>
+                    <div class="accordion-content">
+                        <p>Откройте приложение TikTok и перейдите в свой профиль. Нажмите на кнопку меню (☰) в правом
+                            верхнем углу. Выберите "Настройки и конфиденциальность" → "Аккаунт" → "Скачать данные".
+                            Следуйте инструкциям на экране, выберите формат файла <strong>JSON</strong> и запросите
+                            данные. TikTok подготовит файл (это может занять несколько дней) и уведомит вас, когда он
+                            будет готов к скачиванию.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">Почему нужно ждать файл от TikTok? <i
+                            class="fas fa-plus"></i></button>
+                    <div class="accordion-content">
+                        <p>TikTok собирает большой объем данных о вашей активности. Подготовка полного архива требует
+                            времени на их серверах. Обычно это занимает от 24 до 72 часов, но иногда может быть дольше.
+                        </p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">Безопасно ли загружать сюда мой файл? <i
+                            class="fas fa-plus"></i></button>
+                    <div class="accordion-content">
+                        <p><strong>Да, абсолютно безопасно.</strong> Вся обработка вашего файла происходит
+                            <strong>исключительно в вашем браузере</strong> на вашем устройстве. Ваши данные
+                            <strong>никуда не загружаются и не передаются</strong> на наши или какие-либо другие
+                            серверы. Мы не храним вашу информацию. Кроме того, сам файл данных от TikTok не содержит
+                            вашего пароля.
+                        </p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">Какие данные анализируются? <i
+                            class="fas fa-plus"></i></button>
+                    <div class="accordion-content">
+                        <p>Мы анализируем доступные в вашем файле данных разделы, такие как история просмотров видео,
+                            поставленные лайки, оставленные комментарии, репосты (Share History) и просмотренные
+                            трансляции (Watch Live History) за выбранный вами год.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">Почему некоторые цифры кажутся неточными? <i
+                            class="fas fa-plus"></i></button>
+                    <div class="accordion-content">
+                        <p>Точность статистики зависит от полноты данных в предоставленном вами файле от TikTok. Иногда
+                            TikTok может предоставлять неполные данные или использовать специфические форматы
+                            дат/времени. Мы стараемся интерпретировать данные максимально корректно, но небольшие
+                            расхождения возможны. Например, точное время просмотра каждого видео не предоставляется,
+                            поэтому общее время просмотра является оценкой.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">Это официальный сервис от TikTok? <i
+                            class="fas fa-plus"></i></button>
+                    <div class="accordion-content">
+                        <p>Нет, это <strong>неофициальный</strong> проект, созданный независимыми разработчиками для
+                            развлечения и анализа данных. Он не связан с компанией TikTok или ByteDance.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEO-текст -->
+        <section class="seo-text">
+            <h2>Узнай свою статистику TikTok за год!</h2>
+            <p>Хотите узнать, сколько времени вы провели в TikTok в этом году? Сколько видео посмотрели, сколько лайков
+                поставили, и какие авторы или звуки вам больше всего запомнились? С помощью нашего бесплатного
+                инструмента вы можете получить подробную статистику своей активности в TikTok!</p>
+            <p>Просто скачайте файл с данными из TikTok (инструкция выше), выберите интересующий год, загрузите файл
+                (.zip или .json) на наш сайт, и мы мгновенно покажем вам вашу персональную статистику. Вся обработка
+                происходит локально в вашем браузере, обеспечивая полную конфиденциальность ваших данных.</p>
+            <h3>Что вы можете узнать:</h3>
+            <ul>
+                <li>Общее количество просмотренных видео за год.</li>
+                <li>Примерное общее время, проведенное за просмотром видео.</li>
+                <li>Количество сессий просмотра и их среднюю продолжительность.</li>
+                <li>Ваш самый активный день недели для просмотра TikTok.</li>
+                <li>Количество поставленных лайков и комментариев.</li>
+                <li>Количество сделанных репостов.</li>
+                <li>Информацию о просмотренных Live-трансляциях.</li>
+                <li>И многое другое, в зависимости от данных в вашем файле!</li>
+            </ul>
+            <p>Наш инструмент для просмотра статистики TikTok – это отличный способ подвести итоги года, вспомнить самые
+                яркие моменты и поделиться своей статистикой с друзьями (сделайте скриншот!). Это совершенно бесплатно и
+                безопасно – ваши данные обрабатываются только в вашем браузере.</p>
+            <h3>Как это работает?</h3>
+            <p>TikTok позволяет пользователям скачать архив со своими данными в формате JSON. Этот архив содержит
+                информацию о вашей активности: историю просмотров, лайки, комментарии и т.д. Наш инструмент читает этот
+                файл (даже если он внутри ZIP-архива), анализирует данные за выбранный год и представляет вам статистику
+                в удобном и наглядном виде – сначала в формате анимированных слайдов, а затем в виде детальной таблицы.
+            </p>
+            <h3>Зачем смотреть свою статистику TikTok?</h3>
+            <ul>
+                <li><strong>Узнайте больше о своих привычках в TikTok:</strong> Получите представление о том, как вы
+                    используете приложение.</li>
+                <li><strong>Подведите итоги года:</strong> Вспомните самые интересные моменты и сравните свою активность
+                    с предыдущими годами (если скачивали данные раньше).</li>
+                <li><strong>Это бесплатно и безопасно:</strong> Ваши данные никуда не передаются и обрабатываются
+                    локально.</li>
+                <li><strong>Любопытство:</strong> Просто интересно посмотреть на цифры своей активности!</li>
+            </ul>
+            <p><em>Обратите внимание: Этот сервис является неофициальным инструментом и не связан с TikTok™.</em></p>
+        </section>
+
+        <footer>
+            <p>Создано энтузиастами. Не связано с TikTok™. Ваши данные обрабатываются локально.</p>
+        </footer>
+
+    </div> <!-- Конец #mainContent -->
+
+    <!-- Экран готовности (скрыт по умолчанию) -->
+    <div id="readyScreen" class="container ready-screen-container" style="display: none;">
+        <div class="ready-content">
+            <i class="fas fa-check-circle ready-icon"></i>
+            <h2>Ваша статистика готова!</h2>
+            <p>Мы проанализировали ваши данные и собрали интересные моменты вашего года в TikTok.</p>
+            <button id="showSlideshowButton" aria-label="Показать статистику">Показать статистику <i
+                    class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Полноэкранное слайд-шоу (скрыт по умолчанию) -->
+    <div id="fullscreenSlideshow" style="display: none;" role="region" aria-label="Полноэкранная статистика">
+        <!-- Добавлен tabindex и aria-label для управления фокусом и доступности -->
+        <div class="fs-slides-container" id="fsSlideshowArea" tabindex="-1" aria-live="polite" aria-atomic="true">
+            <!-- Сюда будут добавляться полноэкранные слайды JS -->
+        </div>
+        <button id="closeSlideshowButton" class="close-fs-button" aria-label="Закрыть слайд-шоу"><i
+                class="fas fa-times"></i></button>
+        <div class="fs-progress-bar-container">
+            <div class="fs-progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Контейнер для финальных результатов (Только таблица, скрыт по умолчанию) -->
+    <div id="mainResults" class="container" style="display: none;">
+
+        <!-- Секция таблицы -->
+        <section id="table" aria-labelledby="table-heading"> <!-- Добавлен aria-labelledby -->
+            <h2 id="table-heading">Ваша детальная статистика TikTok</h2> <!-- Добавлен ID для aria -->
+            <p>Все данные представлены за <span id="tableYear"></span> год.</p>
+            <div class="table-responsive-wrapper"> <!-- Обертка для скролла таблицы -->
+                <table id="statsTable" aria-live="polite">
+                    <thead>
+                        <tr>
+                            <th scope="col">Параметр</th> <!-- Добавлен scope="col" -->
+                            <th scope="col">Значение</th> <!-- Добавлен scope="col" -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Таблица заполняется из JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Кнопки управления результатами -->
+        <div class="results-actions"
+            style="text-align: center; margin-top: 30px; padding-bottom: 20px; display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;">
+            <button id="shareImageButton" class="secondary-button" aria-label="Поделиться картинкой со статистикой"><i
+                    class="fas fa-share-alt"></i> Поделиться</button>
+            <button id="resetButton" class="secondary-button">Начать заново</button>
+        </div>
+
+    </div> <!-- Конец #mainResults -->
+
+    <!-- Скрытый контейнер для генерации картинки -->
+    <div id="shareCardContainer" aria-hidden="true"
+        style="position: absolute; left: -9999px; top: -9999px; background: white;">
+        <div id="shareCard"
+            style="width: 450px; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); border-radius: 15px; padding: 35px; font-family: 'Inter', sans-serif; color: #1a202c; border: 1px solid #e2e8f0; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <h3
+                style="text-align: center; font-size: 1.8rem; margin-bottom: 10px; font-weight: 700; background: linear-gradient(60deg, #f95f62, #ff0050, #ff0050, #00f2ea); -webkit-background-clip: text; background-clip: text; color: transparent;">
+                Статистика TikTok</h3>
+            <p style="text-align: center; font-size: 1rem; color: #4a5568; margin-bottom: 30px;">Год: <span
+                    class="share-year" style="font-weight: 600;">ГОД</span> | @<span class="share-username"
+                    style="font-weight: 600;">username</span></p>
+            <div class="share-stat-item"
+                style="margin-bottom: 18px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 500; color: #4a5568;">Просмотрено видео:</span>
+                <span class="share-stat-value" style="font-weight: 700; font-size: 1.2rem;">0</span>
+            </div>
+            <div class="share-stat-item"
+                style="margin-bottom: 18px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 500; color: #4a5568;">Время просмотра (ч):</span>
+                <span class="share-stat-value" style="font-weight: 700; font-size: 1.2rem;">~ 0</span>
+            </div>
+            <div class="share-stat-item"
+                style="margin-bottom: 18px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 500; color: #4a5568;">Поставлено лайков:</span>
+                <span class="share-stat-value" style="font-weight: 700; font-size: 1.2rem;">0</span>
+            </div>
+            <div class="share-stat-item"
+                style="margin-bottom: 18px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-weight: 500; color: #4a5568;">Оставлено коммент.:</span>
+                <span class="share-stat-value" style="font-weight: 700; font-size: 1.2rem;">0</span>
+            </div>
+            <!-- Замените [ВашДомен].com на реальный адрес сайта или название проекта -->
+            <p
+                style="text-align: center; font-size: 0.85rem; color: #a0aec0; margin-top: 30px; padding-top: 15px; border-top: 1px dashed #e2e8f0;">
+                Сгенерировано на MyTikTokStats.com</p>
+        </div>
+    </div>
+
+</body>
+
+</html>
