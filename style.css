@@ -539,6 +539,7 @@ button,
     font-size: 4rem;
     background: var(--primary-gradient);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 25px;
     display: inline-block;

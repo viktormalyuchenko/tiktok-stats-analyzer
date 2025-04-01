@@ -318,12 +318,6 @@
             <p>Все данные представлены за <span id="tableYear"></span> год.</p>
             <div class="table-responsive-wrapper"> <!-- Обертка для скролла таблицы -->
                 <table id="statsTable" aria-live="polite">
-                    <thead>
-                        <tr>
-                            <th scope="col">Параметр</th> <!-- Добавлен scope="col" -->
-                            <th scope="col">Значение</th> <!-- Добавлен scope="col" -->
-                        </tr>
-                    </thead>
                     <tbody>
                         <!-- Таблица заполняется из JS -->
                     </tbody>
@@ -341,41 +335,97 @@
 
     </div> <!-- Конец #mainResults -->
 
-    <!-- Скрытый контейнер для генерации картинки -->
+    <!-- НОВЫЙ БЛОК: Скрытый контейнер для генерации картинки (1080x1920) -->
     <div id="shareCardContainer" aria-hidden="true"
-        style="position: absolute; left: -9999px; top: -9999px; background: white;">
+        style="position: absolute; left: -9999px; top: -9999px; background: #1a1a1a;">
+        <!-- Карточка 9:16 (1080x1920) -->
         <div id="shareCard"
-            style="width: 450px; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); border-radius: 15px; padding: 35px; font-family: 'Inter', sans-serif; color: #1a202c; border: 1px solid #e2e8f0; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-            <h3
-                style="text-align: center; font-size: 1.8rem; margin-bottom: 10px; font-weight: 700; background: linear-gradient(60deg, #f95f62, #ff0050, #ff0050, #00f2ea); -webkit-background-clip: text; background-clip: text; color: transparent;">
-                Статистика TikTok</h3>
-            <p style="text-align: center; font-size: 1rem; color: #4a5568; margin-bottom: 30px;">Год: <span
-                    class="share-year" style="font-weight: 600;">ГОД</span> | @<span class="share-username"
-                    style="font-weight: 600;">username</span></p>
-            <div class="share-stat-item"
-                style="margin-bottom: 18px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 500; color: #4a5568;">Просмотрено видео:</span>
-                <span class="share-stat-value" style="font-weight: 700; font-size: 1.2rem;">0</span>
+            style="width: 1080px; height: 1920px; background-color: #1a1a1a; color: #e8e8e8; padding: 90px 60px; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; /* justify-content: space-between; УБИРАЕМ */ position: relative; overflow: hidden;">
+            <!-- Фоновый SVG узор -->
+            <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; z-index: 0; opacity: 0.05;"
+                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <defs>
+                    <pattern id="wavePattern" patternUnits="userSpaceOnUse" width="150" height="150"
+                        patternTransform="rotate(20)">
+                        <path d="M 0 75 Q 37.5 25, 75 75 T 150 75" stroke="#f0f0f0" stroke-width="1.5" fill="none" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#wavePattern)" />
+            </svg>
+
+            <!-- Основной контент -->
+            <div
+                style="position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; /* Оставляем column */">
+
+                <!-- Верхний блок: Заголовок (без justify-content: space-between; он теперь не нужен для родителя) -->
+                <div class="share-title"
+                    style="text-align: center; margin-bottom: 60px; padding-top: 30px; flex-shrink: 0; /* Не сжимать */">
+                    <span class="share-username"
+                        style="font-size: 3.8rem; font-weight: 600; color: #f0f0f0; display: block; margin-bottom: 15px;">@username</span>
+                    <div
+                        style="height: 18px; width: 70%; margin: 0 auto 25px auto; background: linear-gradient(90deg, #f95f62, #ff0050, #a600f4, #00f2ea); border-radius: 9px;">
+                    </div>
+                    <span class="share-year"
+                        style="font-size: 3.8rem; font-weight: 700; color: #f0f0f0; display: block;">ГОД</span>
+                </div>
+
+                <!-- НОВАЯ ОБЕРТКА для Центрирования Статистики -->
+                <div class="stats-wrapper"
+                    style="flex-grow: 1; /* Занять все доступное пространство */ display: flex; align-items: center; /* Вертикальное центрирование */ justify-content: center; /* Горизонтальное центрирование (для грида не так важно, но пусть будет) */ padding: 20px 0; /* Небольшие вертикальные отступы */">
+                    <!-- Средний блок: Статистика -->
+                    <div class="share-stats-grid"
+                        style="display: grid; grid-template-columns: auto 1fr; gap: 25px 30px; align-items: center; font-size: 1.8rem; width: 90%; /* Ограничим ширину грида */ max-width: 700px; /* Максимальная ширина */ margin: 0 auto; /* Центрируем сам грид */">
+                        <!-- Persona -->
+                        <span class="share-label" style="font-weight: 500; color: #a0a0a0; text-align: left;">Тип
+                            профиля</span>
+                        <span class="share-value share-persona"
+                            style="font-weight: 600; color: #ffffff; text-align: right; font-size: 1.8rem;">-</span>
+                        <!-- Videos Watched -->
+                        <span class="share-label" style="font-weight: 500; color: #a0a0a0; text-align: left;">Всего
+                            видео</span>
+                        <span class="share-value share-videos-watched"
+                            style="font-weight: 600; color: #ffffff; text-align: right;">0</span>
+                        <!-- Watch Time -->
+                        <span class="share-label" style="font-weight: 500; color: #a0a0a0; text-align: left;">Время
+                            просмотра</span>
+                        <span class="share-value share-watch-time"
+                            style="font-weight: 600; color: #ffffff; text-align: right;">~ 0 ч</span>
+                        <!-- Sessions -->
+                        <span class="share-label"
+                            style="font-weight: 500; color: #a0a0a0; text-align: left;">Сессий</span>
+                        <span class="share-value share-sessions"
+                            style="font-weight: 600; color: #ffffff; text-align: right;">0</span>
+                        <!-- Avg Session -->
+                        <span class="share-label" style="font-weight: 500; color: #a0a0a0; text-align: left;">Средняя
+                            сессия</span>
+                        <span class="share-value share-avg-session"
+                            style="font-weight: 600; color: #ffffff; text-align: right;">0 мин</span>
+                        <!-- Comments -->
+                        <span class="share-label"
+                            style="font-weight: 500; color: #a0a0a0; text-align: left;">Комментариев</span>
+                        <span class="share-value share-comments"
+                            style="font-weight: 600; color: #ffffff; text-align: right;">0</span>
+                        <!-- Likes -->
+                        <span class="share-label"
+                            style="font-weight: 500; color: #a0a0a0; text-align: left;">Лайков</span>
+                        <span class="share-value share-likes"
+                            style="font-weight: 600; color: #ffffff; text-align: right;">0</span>
+                        <!-- Emoji -->
+                        <span class="share-label" style="font-weight: 500; color: #a0a0a0; text-align: left;">Любимый
+                            эмодзи</span>
+                        <span class="share-value share-emoji"
+                            style="font-weight: 600; color: #ffffff; text-align: right; font-size: 2.5rem;">-</span>
+                    </div>
+                </div>
+
+                <!-- Нижний блок: Футер (без justify-content: space-between; он теперь не нужен для родителя) -->
+                <div class="share-footer"
+                    style="text-align: center; padding-bottom: 20px; padding-top: 40px; flex-shrink: 0; /* Не сжимать */">
+                    <p style="font-size: 1.3rem; color: #888888; margin-bottom: 5px;">Получи свою статистику на:</p>
+                    <p style="font-size: 1.4rem; color: #b0b0b0; font-weight: 500;">
+                        viktormalyuchenko.github.io/tiktok-stats-analyzer/</p>
+                </div>
             </div>
-            <div class="share-stat-item"
-                style="margin-bottom: 18px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 500; color: #4a5568;">Время просмотра (ч):</span>
-                <span class="share-stat-value" style="font-weight: 700; font-size: 1.2rem;">~ 0</span>
-            </div>
-            <div class="share-stat-item"
-                style="margin-bottom: 18px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 500; color: #4a5568;">Поставлено лайков:</span>
-                <span class="share-stat-value" style="font-weight: 700; font-size: 1.2rem;">0</span>
-            </div>
-            <div class="share-stat-item"
-                style="margin-bottom: 18px; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 500; color: #4a5568;">Оставлено коммент.:</span>
-                <span class="share-stat-value" style="font-weight: 700; font-size: 1.2rem;">0</span>
-            </div>
-            <!-- Замените [ВашДомен].com на реальный адрес сайта или название проекта -->
-            <p
-                style="text-align: center; font-size: 0.85rem; color: #a0aec0; margin-top: 30px; padding-top: 15px; border-top: 1px dashed #e2e8f0;">
-                Сгенерировано на MyTikTokStats.com</p>
         </div>
     </div>
 

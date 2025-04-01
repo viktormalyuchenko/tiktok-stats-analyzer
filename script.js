@@ -29,9 +29,18 @@ const resetButton = document.getElementById('resetButton');
 const shareImageButton = document.getElementById('shareImageButton'); // Share button
 const shareCardContainer = document.getElementById('shareCardContainer'); // Hidden container for image generation
 const shareCard = document.getElementById('shareCard'); // The card element itself
-const shareYearEl = shareCard?.querySelector('.share-year'); // Elements inside the card
+// Elements inside shareCard for updating
 const shareUsernameEl = shareCard?.querySelector('.share-username');
-const shareValuesEl = shareCard?.querySelectorAll('.share-stat-value');
+const shareYearEl = shareCard?.querySelector('.share-year');
+const sharePersonaEl = shareCard?.querySelector('.share-persona');
+const shareVideosWatchedEl = shareCard?.querySelector('.share-videos-watched');
+const shareWatchTimeEl = shareCard?.querySelector('.share-watch-time');
+const shareSessionsEl = shareCard?.querySelector('.share-sessions');
+const shareAvgSessionEl = shareCard?.querySelector('.share-avg-session');
+const shareCommentsEl = shareCard?.querySelector('.share-comments');
+const shareLikesEl = shareCard?.querySelector('.share-likes');
+const shareEmojiEl = shareCard?.querySelector('.share-emoji');
+
 
 const accordionItems = document.querySelectorAll('.accordion-item');
 
@@ -44,7 +53,7 @@ let currentAnalysisResult = null; // Store results for sharing
 let fsSlidesData = []; // Data array for fullscreen slides
 let currentFsSlideIndex = 0;
 let slideshowTimeoutId = null;
-const SLIDESHOW_INTERVAL = 5000; // ms per slide
+const SLIDESHOW_INTERVAL = 5500; // ms per slide
 
 // --- Helper Functions ---
 
@@ -54,9 +63,11 @@ function parseDateString(dateString) {
     const match = dateString.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})$/);
     if (!match) return null;
     const [, year, month, day, hours, minutes, seconds] = match.map(Number);
+    // Basic range validation
     if (month < 1 || month > 12 || day < 1 || day > 31 || hours > 23 || minutes > 59 || seconds > 59) return null;
     const utcDate = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
     if (isNaN(utcDate.getTime())) return null;
+    // Double-check components to catch invalid dates like Feb 30
     if (utcDate.getUTCFullYear() !== year || utcDate.getUTCMonth() !== month - 1 || utcDate.getUTCDate() !== day) return null;
     return utcDate;
 }
@@ -66,21 +77,39 @@ function formatToUserTimezone(dateInput, timezone, options = {}) {
     let dateObj;
     if (dateInput instanceof Date) dateObj = dateInput;
     else if (typeof dateInput === 'string' && dateInput !== "N/A") dateObj = parseDateString(dateInput);
-    else return typeof dateInput === 'string' ? dateInput : "N/A";
-    if (!dateObj || isNaN(dateObj.getTime())) return typeof dateInput === 'string' ? dateInput : "N/A";
+    else return typeof dateInput === 'string' ? dateInput : "N/A"; // Return original invalid string or N/A
+
+    if (!dateObj || isNaN(dateObj.getTime())) return typeof dateInput === 'string' ? dateInput : "N/A"; // Return original if parsing failed
+
+    // Define default options for date formatting
     const defaultOptions = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZone: timezone, hour12: false };
+    // Merge defaults with provided options
     const finalOptions = { ...defaultOptions, ...options };
-    try { return dateObj.toLocaleString('ru-RU', finalOptions); }
-    catch (error) { console.error("Date format error:", error); return "Ошибка даты"; }
+
+    try {
+        return dateObj.toLocaleString('ru-RU', finalOptions);
+    } catch (error) {
+        console.error("Date format error:", error, "Input:", dateInput, "Options:", finalOptions);
+        // Fallback to a simpler UTC format if localization fails
+        try {
+            return dateObj.toISOString().replace('T', ' ').substring(0, 16) + " UTC"; // YYYY-MM-DD HH:MM UTC
+        } catch {
+            return "Ошибка даты"; // Final fallback
+        }
+    }
 }
+
 
 /** Creates HTML element. */
 function createElement(tag, attributes = {}, children = []) {
     const element = document.createElement(tag);
     for (const key in attributes) element.setAttribute(key, attributes[key]);
-    if (typeof children === 'string') element.innerHTML = children;
+    if (typeof children === 'string') element.innerHTML = children; // Allow HTML content
     else if (Array.isArray(children)) {
-        children.forEach(child => { if (child instanceof Node) element.appendChild(child); else if (typeof child === 'string') element.appendChild(document.createTextNode(child)); });
+        children.forEach(child => {
+            if (child instanceof Node) element.appendChild(child);
+            else if (typeof child === 'string') element.appendChild(document.createTextNode(child));
+        });
     } else if (children instanceof Node) element.appendChild(children);
     return element;
 }
@@ -93,7 +122,10 @@ function populateYearSelect() {
     if (!yearSelect) return;
     const currentYear = new Date().getFullYear();
     yearSelect.innerHTML = '';
-    for (let year = currentYear; year >= 2017; year--) { const option = createElement('option', { value: year }, String(year)); yearSelect.appendChild(option); }
+    for (let year = currentYear; year >= 2017; year--) { // Adjust start year if needed
+        const option = createElement('option', { value: year }, String(year));
+        yearSelect.appendChild(option);
+    }
     yearSelect.value = currentYear;
 }
 
@@ -109,13 +141,15 @@ function resetToInitialState() {
     clearTimeout(slideshowTimeoutId);
     if (fullscreenSlideshow) { fullscreenSlideshow.classList.remove('visible'); fullscreenSlideshow.style.display = 'none'; if (fsProgressBar) { fsProgressBar.style.transition = 'none'; fsProgressBar.style.width = '0%'; } }
     if (readyScreen) { readyScreen.classList.remove('visible'); readyScreen.style.display = 'none'; }
-    if (mainResults) { mainResults.classList.remove('visible'); mainResults.style.display = 'none'; if (tableSection) tableSection.style.display = 'block'; }
+    if (mainResults) { mainResults.classList.remove('visible'); mainResults.style.display = 'none'; if (tableSection) tableSection.style.display = 'block'; } // Show table by default inside results
     if (mainContent) mainContent.style.display = 'block';
     resetUploadText(); if (zipFileInput) zipFileInput.value = '';
     document.body.style.overflow = '';
     if (statsTableBody) statsTableBody.innerHTML = ''; if (fsSlidesContainer) fsSlidesContainer.innerHTML = '';
     updateStatus('', 'loading'); // Clear status message
     console.log("Состояние сброшено.");
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /** Resets upload area text */
@@ -147,10 +181,10 @@ function handleFile(file) {
     if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) { handleError(`Неподдерживаемый тип файла (${file.type || fileExtension || 'неизвестный'}). Выберите .zip или .json.`); resetUploadText(); return; }
     if (uploadText) uploadText.textContent = `Выбран файл: ${file.name}`;
     updateStatus('Обработка файла...', 'loading');
-    if (mainContent) mainContent.style.display = 'none'; if (readyScreen) readyScreen.style.display = 'none'; if (mainResults) mainResults.style.display = 'none';
+    if (mainContent) mainContent.style.display = 'none'; if (readyScreen) readyScreen.style.display = 'none'; if (mainResults) mainResults.style.display = 'none'; // Hide everything during processing
     if (fileExtension === '.zip' || file.type.includes('zip')) handleZipFile(file);
     else if (fileExtension === '.json' || file.type.includes('json')) handleJsonFile(file);
-    else { handleError('Не удалось определить тип файла.'); resetUploadText(); }
+    else { handleError('Не удалось определить тип файла.'); resetUploadText(); } // Should not happen often
 }
 function handleZipFile(file) {
     if (typeof JSZip === 'undefined') { handleError("Библиотека JSZip не загружена."); return; }
@@ -183,17 +217,156 @@ function validateTikTokData(data) {
     const essentialKeys = ['Your Activity', 'Profile'];
     for (const key of essentialKeys) { if (!data.hasOwnProperty(key) || typeof data[key] !== 'object' || data[key] === null) { handleError(`Отсутствует обязательный раздел: "${key}".`); return false; } }
     if (!data['Your Activity']?.['Watch History']?.VideoList || !data['Your Activity']?.['Like List']?.ItemFavoriteList) console.warn('Watch History или Like List не найдены/пусты.');
+    // Add more checks if needed
     return true;
 }
 
 // --- Data Analysis Functions ---
-// (Include the full, corrected versions of processProfileData, processWatchHistoryData, processCommentsData, processLikesData, processSharesData, processLiveData from previous steps here)
-function processProfileData(profileSection, selectedYear) { const pI = profileSection?.["Profile Info"]?.ProfileMap; const tD = {}; if (pI) { tD['Имя пользователя (userName)'] = pI.userName || 'N/A'; tD['Bio'] = pI.bioDescription || 'N/A'; } else { console.warn("Profile Info->ProfileMap not found."); tD['Профиль'] = 'N/A'; } return { tableData: tD, slideInfo: { userName: pI?.userName || '' } }; }
-function processWatchHistoryData(watchHistorySection, selectedYear) { const vL = watchHistorySection?.VideoList; const tD = {}; let vC = 0, tWTM = 0, wS = 0, aSL = 0, lSM = 0, lSDS = 'N/A', mAW = 'N/A', eVD = null, lVD = null; if (Array.isArray(vL) && vL.length > 0) { const yVL = vL.filter(v => { if (!v || !v.Date) return false; const d = parseDateString(v.Date); return d && d.getUTCFullYear() === selectedYear }); vC = yVL.length; if (vC > 0) { const avgS = 15; tWTM = Math.round((vC * avgS) / 60); yVL.sort((a, b) => { const dA = parseDateString(a.Date), dB = parseDateString(b.Date); if (!dA && !dB) return 0; if (!dA) return 1; if (!dB) return -1; return dA - dB; }); for (const v of yVL) { const d = parseDateString(v.Date); if (d) { if (!eVD) eVD = d; lVD = d; } } let cSS = null, cSE = null, cSVC = 0; lSM = 0; yVL.forEach((v, i) => { const d = parseDateString(v.Date); if (!d) return; if (cSS === null) { wS = 1; cSS = d; cSE = d; cSVC = 1; } else { const tDM = (d - cSE) / (1000 * 60); if (tDM > 30) { const dur = cSVC * avgS / 60; if (dur > lSM) { lSM = Math.round(dur); lSDS = formatToUserTimezone(cSS, userTimezone, { month: 'short', day: 'numeric' }); } wS++; cSS = d; cSVC = 1; } else { cSVC++; } cSE = d; } if (i === yVL.length - 1 && cSS) { const dur = cSVC * avgS / 60; if (dur > lSM) { lSM = Math.round(dur); lSDS = formatToUserTimezone(cSS, userTimezone, { month: 'short', day: 'numeric' }); } } }); aSL = wS > 0 ? Math.round(tWTM / wS) : 0; const wk = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'], wc = Array(7).fill(0); yVL.forEach(v => { const d = parseDateString(v.Date); if (d) wc[d.getUTCDay()]++; }); const mc = Math.max(...wc); if (mc > 0) mAW = wk[wc.indexOf(mc)]; } } else console.warn("Watch History empty."); tD['Всего просмотрено видео'] = vC.toLocaleString('ru-RU'); tD['Общее время (оценка)'] = `${tWTM.toLocaleString('ru-RU')} мин ≈ ${Math.round(tWTM / 60).toLocaleString('ru-RU')} ч`; tD['Сессий просмотра'] = wS.toLocaleString('ru-RU'); tD['Средняя сессия (оценка)'] = `${aSL.toLocaleString('ru-RU')} мин`; tD['Самая длинная сессия (оценка)'] = lSM > 0 ? `${lSDS} (~${lSM.toLocaleString('ru-RU')} мин)` : 'N/A'; tD['Самый активный день'] = mAW; tD['Первое видео года'] = eVD ? formatToUserTimezone(eVD, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'; tD['Последнее видео года'] = lVD ? formatToUserTimezone(lVD, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'; return { tableData: tD, slideInfo: { videoCount: vC, totalWatchTimeHours: Math.round(tWTM / 60), mostActiveWeekday: mAW } }; }
-function processCommentsData(commentsSection, selectedYear) { const cL = commentsSection?.Comments?.CommentsList; const tD = {}; let cC = 0, tCL = 0, aCL = 0, mUE = '', mEC = 0, eCD = null, lCD = null; const eC = {}; if (Array.isArray(cL) && cL.length > 0) { const yC = cL.filter(c => { if (!c || !c.date) return false; const d = parseDateString(c.date); return d && d.getUTCFullYear() === selectedYear }); cC = yC.length; if (cC > 0) { yC.forEach(c => { if (!c.comment || typeof c.comment !== 'string') return; tCL += c.comment.length; const d = parseDateString(c.date); if (d) { if (!eCD || d < eCD) eCD = d; if (!lCD || d > lCD) lCD = d; } const r = /([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]\u{FE0F}?(\u{200D}[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]\u{FE0F}?)*)/gu; const m = c.comment.match(r); if (m) { m.forEach(e => { const bE = e.replace(/\u{FE0F}/g, ''); eC[bE] = (eC[bE] || 0) + 1; }); } }); aCL = cC > 0 ? Math.round(tCL / cC) : 0; mUE = ''; mEC = 0; for (const e in eC) { if (eC.hasOwnProperty(e) && eC[e] > mEC) { mUE = e; mEC = eC[e]; } } } } else console.warn("Comment List empty."); tD['Всего комментариев'] = cC.toLocaleString('ru-RU'); if (cC > 0) tD['Средняя длина комментария'] = `${aCL.toLocaleString('ru-RU')} симв.`; tD['Самый частый эмодзи'] = mEC > 0 ? `${mUE} (x${mEC.toLocaleString('ru-RU')})` : '(нет эмодзи)'; tD['Первый коммент. года'] = eCD ? formatToUserTimezone(eCD, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'; tD['Последний коммент. года'] = lCD ? formatToUserTimezone(lCD, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'; return { tableData: tD, slideInfo: { commentCount: cC, mostUsedEmoji: mEC > 0 ? mUE : null } }; }
-function processLikesData(likesSection, selectedYear) { const lL = likesSection?.ItemFavoriteList; const tD = {}; let lC = 0, mDC = 0, mDS = 'N/A', fLD = null, fLL = null; if (Array.isArray(lL) && lL.length > 0) { const yL = lL.filter(l => { if (!l || !l.date) return false; const d = parseDateString(l.date); return d && d.getUTCFullYear() === selectedYear }); lC = yL.length; if (lC > 0) { const dC = {}; yL.sort((a, b) => { const dA = parseDateString(a.date), dB = parseDateString(b.date); if (!dA && !dB) return 0; if (!dA) return 1; if (!dB) return -1; return dA - dB; }); for (const l of yL) { const d = parseDateString(l.date); if (d) { if (!fLD) { fLD = d; fLL = (l.link && l.link.startsWith('http')) ? l.link : null; } const ds = d.toISOString().split('T')[0]; dC[ds] = (dC[ds] || 0) + 1; } } for (const day in dC) { if (dC[day] > mDC) { mDC = dC[day]; const [y, m, d] = day.split('-'); mDS = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('ru-RU', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }); } } } } else console.warn("Like List empty."); tD['Всего лайков поставлено'] = lC.toLocaleString('ru-RU'); tD['День с макс. лайками'] = mDC > 0 ? `${mDS} (${mDC.toLocaleString('ru-RU')} лайков)` : 'N/A'; tD['Первый лайк года'] = fLD ? `${formatToUserTimezone(fLD, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' })} ${fLL ? `<a href="${fLL}" target="_blank" rel="noopener noreferrer" title="Открыть видео">🔗</a>` : ''}` : 'N/A'; return { tableData: tD, slideInfo: { likeCount: lC } }; }
-function processSharesData(shareHistoryList, selectedYear) { const tD = {}; let sC = 0, mSC = 0, mSS = 'N/A', fSD = null, fSL = null; if (Array.isArray(shareHistoryList) && shareHistoryList.length > 0) { const yS = shareHistoryList.filter(s => { if (!s || !s.Date) return false; const d = parseDateString(s.Date); return d && d.getUTCFullYear() === selectedYear }); sC = yS.length; if (sC > 0) { const dC = {}; yS.sort((a, b) => { const dA = parseDateString(a.Date), dB = parseDateString(b.Date); if (!dA && !dB) return 0; if (!dA) return 1; if (!dB) return -1; return dA - dB; }); for (const s of yS) { const d = parseDateString(s.Date); if (d) { if (!fSD) { fSD = d; fSL = (s.Link && s.Link.startsWith('http')) ? s.Link : null; } const ds = d.toISOString().split('T')[0]; dC[ds] = (dC[ds] || 0) + 1; } } for (const day in dC) { if (dC[day] > mSC) { mSC = dC[day]; const [y, m, d] = day.split('-'); mSS = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('ru-RU', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }); } } } } else console.warn("Share List empty."); tD['Всего репостов сделано'] = sC.toLocaleString('ru-RU'); tD['День с макс. репостами'] = mSC > 0 ? `${mSS} (${mSC.toLocaleString('ru-RU')} репостов)` : 'N/A'; tD['Первый репост года'] = fSD ? `${formatToUserTimezone(fSD, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' })} ${fSL ? `<a href="${fSL}" target="_blank" rel="noopener noreferrer" title="Открыть видео">🔗</a>` : ''}` : 'N/A'; return { tableData: tD, slideInfo: { shareCount: sC } }; }
-function processLiveData(liveSection, selectedYear) { const wLH = liveSection?.["Watch Live History"]?.WatchLiveMap; const tD = {}; let lC = 0; if (wLH && typeof wLH === 'object') { lC = Object.values(wLH).filter(l => { const d = parseDateString(l.WatchTime); return d && d.getUTCFullYear() === selectedYear }).length; } tD['Просмотрено трансляций (Live)'] = lC.toLocaleString('ru-RU'); return { tableData: tD, slideInfo: { liveCount: lC } }; }
+
+function processProfileData(profileSection, selectedYear) {
+    const profileInfo = profileSection?.["Profile Info"]?.ProfileMap;
+    const tableData = {};
+    if (profileInfo) {
+        tableData['Имя пользователя (userName)'] = profileInfo.userName || 'N/A';
+        tableData['Bio'] = profileInfo.bioDescription || 'N/A';
+    } else {
+        console.warn("Не удалось найти 'Profile Info -> ProfileMap'.");
+        tableData['Профиль'] = 'Информация не найдена';
+    }
+    const slideInfo = { userName: profileInfo?.userName || '' };
+    return { tableData, slideInfo };
+}
+
+function processWatchHistoryData(watchHistorySection, selectedYear) {
+    const videoList = watchHistorySection?.VideoList;
+    const tableData = {};
+    let videoCount = 0, totalWatchTimeMinutes = 0, watchSessions = 0, averageSessionLength = 0;
+    let longestSessionMinutes = 0, longestSessionDateStr = 'N/A', mostActiveWeekday = 'N/A';
+    let earliestVideoDate = null, latestVideoDate = null;
+
+    if (Array.isArray(videoList) && videoList.length > 0) {
+        const yearVideoList = videoList.filter(video => {
+            if (!video || !video.Date) return false;
+            const videoDate = parseDateString(video.Date);
+            return videoDate && videoDate.getUTCFullYear() === selectedYear;
+        });
+        videoCount = yearVideoList.length;
+        if (videoCount > 0) {
+            const averageWatchSeconds = 15;
+            totalWatchTimeMinutes = Math.round((videoCount * averageWatchSeconds) / 60);
+            yearVideoList.sort((a, b) => { const dA = parseDateString(a.Date), dB = parseDateString(b.Date); if (!dA && !dB) return 0; if (!dA) return 1; if (!dB) return -1; return dA - dB; });
+            for (const video of yearVideoList) { const d = parseDateString(video.Date); if (d) { if (!earliestVideoDate) earliestVideoDate = d; latestVideoDate = d; } }
+
+            let currentSessionStart = null; let currentSessionEnd = null; let currentSessionVideoCount = 0; longestSessionMinutes = 0;
+            yearVideoList.forEach((video, index) => {
+                const videoDate = parseDateString(video.Date); if (!videoDate) return;
+                if (currentSessionStart === null) { watchSessions = 1; currentSessionStart = videoDate; currentSessionEnd = videoDate; currentSessionVideoCount = 1; }
+                else {
+                    const timeDiffMinutes = (videoDate - currentSessionEnd) / (1000 * 60);
+                    if (timeDiffMinutes > 30) { const dur = currentSessionVideoCount * averageWatchSeconds / 60; if (dur > longestSessionMinutes) { longestSessionMinutes = Math.round(dur); longestSessionDateStr = formatToUserTimezone(currentSessionStart, userTimezone, { month: 'short', day: 'numeric' }); } watchSessions++; currentSessionStart = videoDate; currentSessionVideoCount = 1; }
+                    else { currentSessionVideoCount++; } currentSessionEnd = videoDate;
+                }
+                if (index === yearVideoList.length - 1 && currentSessionStart) { const dur = currentSessionVideoCount * averageWatchSeconds / 60; if (dur > longestSessionMinutes) { longestSessionMinutes = Math.round(dur); longestSessionDateStr = formatToUserTimezone(currentSessionStart, userTimezone, { month: 'short', day: 'numeric' }); } }
+            });
+            averageSessionLength = watchSessions > 0 ? Math.round(totalWatchTimeMinutes / watchSessions) : 0;
+            const weekdays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']; const wc = Array(7).fill(0); yearVideoList.forEach(v => { const d = parseDateString(v.Date); if (d) wc[d.getUTCDay()]++; }); const mc = Math.max(...wc); if (mc > 0) mostActiveWeekday = weekdays[wc.indexOf(mc)];
+        }
+    } else { console.warn("Watch History не найден или пуст."); }
+
+    tableData['Всего просмотрено видео'] = videoCount.toLocaleString('ru-RU');
+    tableData['Общее время (оценка)'] = `${totalWatchTimeMinutes.toLocaleString('ru-RU')} мин ≈ ${Math.round(totalWatchTimeMinutes / 60).toLocaleString('ru-RU')} ч`;
+    tableData['Сессий просмотра'] = watchSessions.toLocaleString('ru-RU');
+    tableData['Средняя сессия (оценка)'] = `${averageSessionLength.toLocaleString('ru-RU')} мин`;
+    tableData['Самая длинная сессия (оценка)'] = longestSessionMinutes > 0 ? `${longestSessionDateStr} (~${longestSessionMinutes.toLocaleString('ru-RU')} мин)` : 'N/A';
+    tableData['Самый активный день'] = mostActiveWeekday;
+    tableData['Первое видео года'] = earliestVideoDate ? formatToUserTimezone(earliestVideoDate, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+    tableData['Последнее видео года'] = latestVideoDate ? formatToUserTimezone(latestVideoDate, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+
+    const slideInfo = { videoCount, totalWatchTimeHours: Math.round(totalWatchTimeMinutes / 60), watchSessions, averageSessionLength, mostActiveWeekday }; // Added sessions/avg length
+    return { tableData, slideInfo };
+}
+
+function processCommentsData(commentsSection, selectedYear) {
+    const commentsList = commentsSection?.Comments?.CommentsList;
+    const tableData = {};
+    let commentCount = 0, totalCommentLength = 0, averageCommentLength = 0;
+    let mostUsedEmoji = '', maxEmojiCount = 0;
+    let earliestCommentDate = null, latestCommentDate = null;
+    const emojiCounts = {};
+
+    if (Array.isArray(commentsList) && commentsList.length > 0) {
+        const yearComments = commentsList.filter(comment => { if (!comment || !comment.date) return false; const d = parseDateString(comment.date); return d && d.getUTCFullYear() === selectedYear; });
+        commentCount = yearComments.length;
+        if (commentCount > 0) {
+            yearComments.forEach(comment => {
+                if (!comment.comment || typeof comment.comment !== 'string') return;
+                totalCommentLength += comment.comment.length;
+                const commentDate = parseDateString(comment.date); if (commentDate) { if (!earliestCommentDate || commentDate < earliestCommentDate) earliestCommentDate = commentDate; if (!latestCommentDate || commentDate > latestCommentDate) latestCommentDate = commentDate; }
+                const emojiRegex = /([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]\u{FE0F}?(\u{200D}[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F1E6}-\u{1F1FF}]\u{FE0F}?)*)/gu;
+                const matches = comment.comment.match(emojiRegex);
+                if (matches) { matches.forEach(emoji => { const baseEmoji = emoji.replace(/\u{FE0F}/g, ''); emojiCounts[baseEmoji] = (emojiCounts[baseEmoji] || 0) + 1; }); }
+            });
+            averageCommentLength = commentCount > 0 ? Math.round(totalCommentLength / commentCount) : 0;
+            mostUsedEmoji = ''; maxEmojiCount = 0; for (const emoji in emojiCounts) { if (emojiCounts.hasOwnProperty(emoji) && emojiCounts[emoji] > maxEmojiCount) { mostUsedEmoji = emoji; maxEmojiCount = emojiCounts[emoji]; } }
+        }
+    } else { console.warn("[processCommentsData] Comment List не найден или пуст."); }
+
+    tableData['Всего комментариев'] = commentCount.toLocaleString('ru-RU');
+    if (commentCount > 0) tableData['Средняя длина комментария'] = `${averageCommentLength.toLocaleString('ru-RU')} симв.`;
+    tableData['Самый частый эмодзи'] = maxEmojiCount > 0 ? `${mostUsedEmoji} (x${maxEmojiCount.toLocaleString('ru-RU')})` : '(нет эмодзи)';
+    tableData['Первый коммент. года'] = earliestCommentDate ? formatToUserTimezone(earliestCommentDate, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+    tableData['Последний коммент. года'] = latestCommentDate ? formatToUserTimezone(latestCommentDate, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A';
+
+    const slideInfo = { commentCount, mostUsedEmoji: maxEmojiCount > 0 ? mostUsedEmoji : null };
+    return { tableData, slideInfo };
+}
+
+function processLikesData(likesSection, selectedYear) {
+    const likesList = likesSection?.ItemFavoriteList;
+    const tableData = {};
+    let likeCount = 0, mostLikedDayCount = 0, mostLikedDayStr = 'N/A';
+    let firstLikeDate = null, firstLikeLink = null;
+    if (Array.isArray(likesList) && likesList.length > 0) {
+        const yearLikes = likesList.filter(like => { if (!like || !like.date) return false; const d = parseDateString(like.date); return d && d.getUTCFullYear() === selectedYear; });
+        likeCount = yearLikes.length;
+        if (likeCount > 0) {
+            const dayCounts = {}; yearLikes.sort((a, b) => { const dA = parseDateString(a.date), dB = parseDateString(b.date); if (!dA && !dB) return 0; if (!dA) return 1; if (!dB) return -1; return dA - dB; });
+            for (const like of yearLikes) { const d = parseDateString(like.date); if (d) { if (!firstLikeDate) { firstLikeDate = d; firstLikeLink = (like.link && like.link.startsWith('http')) ? like.link : null; } const ds = d.toISOString().split('T')[0]; dayCounts[ds] = (dayCounts[ds] || 0) + 1; } }
+            for (const day in dayCounts) { if (dayCounts[day] > mostLikedDayCount) { mostLikedDayCount = dayCounts[day]; const [y, m, d] = day.split('-'); mostLikedDayStr = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('ru-RU', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }); } }
+        }
+    } else { console.warn("Like List не найден или пуст."); }
+    tableData['Всего лайков поставлено'] = likeCount.toLocaleString('ru-RU');
+    tableData['День с макс. лайками'] = mostLikedDayCount > 0 ? `${mostLikedDayStr} (${mostLikedDayCount.toLocaleString('ru-RU')} лайков)` : 'N/A';
+    tableData['Первый лайк года'] = firstLikeDate ? `${formatToUserTimezone(firstLikeDate, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' })} ${firstLikeLink ? `<a href="${firstLikeLink}" target="_blank" rel="noopener noreferrer" title="Открыть видео">🔗</a>` : ''}` : 'N/A';
+    return { tableData, slideInfo: { likeCount } };
+}
+
+function processSharesData(shareHistoryList, selectedYear) {
+    const tableData = {};
+    let shareCount = 0, mostSharedDayCount = 0, mostSharedDayStr = 'N/A';
+    let firstShareDate = null, firstShareLink = null;
+    if (Array.isArray(shareHistoryList) && shareHistoryList.length > 0) {
+        const yearShares = shareHistoryList.filter(share => { if (!share || !share.Date) return false; const d = parseDateString(share.Date); return d && d.getUTCFullYear() === selectedYear; });
+        shareCount = yearShares.length;
+        if (shareCount > 0) {
+            const dayCounts = {}; yearShares.sort((a, b) => { const dA = parseDateString(a.Date), dB = parseDateString(b.Date); if (!dA && !dB) return 0; if (!dA) return 1; if (!dB) return -1; return dA - dB; });
+            for (const share of yearShares) { const d = parseDateString(share.Date); if (d) { if (!firstShareDate) { firstShareDate = d; firstShareLink = (share.Link && share.Link.startsWith('http')) ? share.Link : null; } const ds = d.toISOString().split('T')[0]; dayCounts[ds] = (dayCounts[ds] || 0) + 1; } }
+            for (const day in dayCounts) { if (dayCounts[day] > mostSharedDayCount) { mostSharedDayCount = dayCounts[day]; const [y, m, d] = day.split('-'); mostSharedDayStr = new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('ru-RU', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }); } }
+        }
+    } else { console.warn("Share History List не найден или пуст."); }
+    tableData['Всего репостов сделано'] = shareCount.toLocaleString('ru-RU');
+    tableData['День с макс. репостами'] = mostSharedDayCount > 0 ? `${mostSharedDayStr} (${mostSharedDayCount.toLocaleString('ru-RU')} репостов)` : 'N/A';
+    tableData['Первый репост года'] = firstShareDate ? `${formatToUserTimezone(firstShareDate, userTimezone, { year: 'numeric', month: 'long', day: 'numeric' })} ${firstShareLink ? `<a href="${firstShareLink}" target="_blank" rel="noopener noreferrer" title="Открыть видео">🔗</a>` : ''}` : 'N/A';
+    return { tableData, slideInfo: { shareCount } };
+}
+
+function processLiveData(liveSection, selectedYear) {
+    const watchLiveHistory = liveSection?.["Watch Live History"]?.WatchLiveMap;
+    const tableData = {}; let liveCount = 0;
+    if (watchLiveHistory && typeof watchLiveHistory === 'object') { liveCount = Object.values(watchLiveHistory).filter(l => { const d = parseDateString(l.WatchTime); return d && d.getUTCFullYear() === selectedYear; }).length; }
+    tableData['Просмотрено трансляций (Live)'] = liveCount.toLocaleString('ru-RU');
+    return { tableData, slideInfo: { liveCount } };
+}
 
 
 /** Analyzes all data, populates table, returns stats object */
@@ -222,7 +395,7 @@ addStatsToTable.currentGroup = null;
 
 // --- Fullscreen Slideshow Logic ---
 function animateCounter(element, targetValue, duration = 1500) {
-    if (!element || isNaN(targetValue)) { if (element) element.textContent = 'N/A'; return; };
+    if (!element || isNaN(targetValue)) { if (element) element.textContent = targetValue?.toLocaleString('ru-RU') || 'N/A'; return; };
     element.classList.add('counting'); let startValue = 0; const startTime = performance.now();
     function updateCounter(currentTime) { const elT = currentTime - startTime, prog = Math.min(1, elT / duration), eP = 1 - Math.pow(1 - prog, 3), cV = Math.floor(eP * (targetValue - startValue) + startValue); element.textContent = cV.toLocaleString('ru-RU'); if (prog < 1) requestAnimationFrame(updateCounter); else { element.textContent = targetValue.toLocaleString('ru-RU'); element.classList.remove('counting'); } } requestAnimationFrame(updateCounter);
 }
@@ -232,7 +405,7 @@ function createFullscreenSlideElement(slideData) {
 function showNextFullscreenSlide() {
     if (!fsSlidesContainer || !fsProgressBar) return; clearTimeout(slideshowTimeoutId);
     const slides = fsSlidesContainer.querySelectorAll('.fs-slide'); if (slides.length === 0) return;
-    const currentActive = fsSlidesContainer.querySelector('.fs-slide.active'); if (currentActive) { currentActive.classList.remove('active'); currentActive.classList.add('exiting'); setTimeout(() => { currentActive.classList.remove('exiting'); }, 600); }
+    const currentActive = fsSlidesContainer.querySelector('.fs-slide.active'); if (currentActive) { currentActive.classList.remove('active'); currentActive.classList.add('exiting'); setTimeout(() => { currentActive?.classList.remove('exiting'); }, 600); }
     currentFsSlideIndex++; if (currentFsSlideIndex >= slides.length) { endFullscreenSlideshow(); return; }
     const nextSlide = slides[currentFsSlideIndex]; if (!nextSlide) { endFullscreenSlideshow(); return; } nextSlide.classList.add('active');
     const valueElement = nextSlide.querySelector('.fs-value'); if (valueElement && valueElement.hasAttribute('data-target')) { const tV = valueElement.getAttribute('data-target'); const tN = parseInt(tV, 10); if (!isNaN(tN) && typeof fsSlidesData[currentFsSlideIndex]?.value === 'number') { valueElement.textContent = '0'; setTimeout(() => animateCounter(valueElement, tN, 1500), 300); } else { valueElement.textContent = tV; } }
@@ -242,7 +415,7 @@ function showNextFullscreenSlide() {
 function showPrevFullscreenSlide() {
     if (!fsSlidesContainer || !fsProgressBar || currentFsSlideIndex <= 0) return; clearTimeout(slideshowTimeoutId);
     const slides = fsSlidesContainer.querySelectorAll('.fs-slide'); if (slides.length === 0) return;
-    const currentActive = fsSlidesContainer.querySelector('.fs-slide.active'); if (currentActive) { currentActive.classList.remove('active'); currentActive.classList.add('exiting'); setTimeout(() => { currentActive.classList.remove('exiting'); }, 600); }
+    const currentActive = fsSlidesContainer.querySelector('.fs-slide.active'); if (currentActive) { currentActive.classList.remove('active'); currentActive.classList.add('exiting'); setTimeout(() => { currentActive?.classList.remove('exiting'); }, 600); }
     currentFsSlideIndex--; const prevSlide = slides[currentFsSlideIndex]; if (!prevSlide) return; prevSlide.classList.add('active');
     const valueElement = prevSlide.querySelector('.fs-value'); if (valueElement && valueElement.hasAttribute('data-target')) { const tV = valueElement.getAttribute('data-target'); const tN = parseInt(tV, 10); if (!isNaN(tN) && typeof fsSlidesData[currentFsSlideIndex]?.value === 'number') { valueElement.textContent = '0'; setTimeout(() => animateCounter(valueElement, tN, 1500), 300); } else { valueElement.textContent = tV; } }
     fsProgressBar.style.transition = 'none'; fsProgressBar.style.width = '0%'; void fsProgressBar.offsetWidth; fsProgressBar.style.transition = `width ${SLIDESHOW_INTERVAL / 1000}s linear`; fsProgressBar.style.width = '100%';
@@ -265,15 +438,16 @@ function endFullscreenSlideshow() {
         tableSection.style.display = 'block'; tableYearSpan.textContent = yearSelect.value;
     }, 400);
 }
+function getCommentary(value, type) { if (value === undefined || value === null || value <= 0) return "В этом году здесь было тихо..."; switch (type) { case 'views': if (value < 500) return "Кажется, ты заходил в TikTok не так часто."; if (value < 2000) return "Неплохое начало! Ты определенно в теме."; if (value < 10000) return "Ты провел немало времени, листая ленту!"; return "Ого! Похоже, TikTok был твоим верным спутником!"; case 'likes': if (value < 100) return "Ты ставишь лайки только избранным."; if (value < 1000) return "Ты оценил немало хороших видео!"; if (value < 5000) return "Твои двойные тапы не знали покоя!"; return "Лайк-машина! Ты отметил уйму контента!"; case 'comments': if (value < 20) return "Ты больше наблюдатель."; if (value < 100) return "Тебе было что сказать!"; if (value < 500) return "Ты активно участвовал в обсуждениях!"; return "Настоящий комментатор!"; case 'shares': if (value < 10) return "Самое лучшее - для себя."; if (value < 50) return "Ты поделился находками."; if (value < 200) return "Ты знаешь толк в трендах!"; return "Мастер репостов!"; case 'live': if (value < 5) return "Прямые эфиры – не твое."; if (value < 25) return "Иногда заглядывал на трансляции."; if (value < 100) return "Любишь смотреть в реальном времени!"; return "Поклонник Live!"; default: return "Интересные цифры!"; } }
 function prepareFullscreenSlidesData(stats, year) {
     const slides = [];
     slides.push({ title: `Твоя статистика ${year}`, value: stats.profile?.slideInfo?.userName || '👋', label: `Готов увидеть итоги?`, details: "Собрали самые интересные моменты." });
-    if (stats.watchHistory?.slideInfo?.videoCount > 0) slides.push({ title: "Просмотры", value: stats.watchHistory.slideInfo.videoCount, label: "видео просмотрено", details: `Примерно ${stats.watchHistory.slideInfo.totalWatchTimeHours.toLocaleString('ru-RU')} ч. в TikTok!` });
+    if (stats.watchHistory?.slideInfo?.videoCount > 0) { const v = stats.watchHistory.slideInfo.videoCount; const d = getCommentary(v, 'views') + `<br><small>(Примерно ${stats.watchHistory.slideInfo.totalWatchTimeHours.toLocaleString('ru-RU')} ч. в TikTok)</small>`; slides.push({ title: "Просмотры", value: v, label: "видео просмотрено", details: d }); }
     if (stats.watchHistory?.slideInfo?.mostActiveWeekday !== 'N/A') slides.push({ title: "Любимый день", value: stats.watchHistory.slideInfo.mostActiveWeekday, label: "твой самый активный день в TikTok" });
-    if (stats.likes?.slideInfo?.likeCount > 0) slides.push({ title: "Лайки", value: stats.likes.slideInfo.likeCount, label: "лайков поставлено" });
-    if (stats.comments?.slideInfo?.commentCount > 0) { let d = "Ты не молчал!"; if (stats.comments.slideInfo.mostUsedEmoji) d += ` Твой фаворит: <span style='font-size:1.5em;vertical-align:middle;'>${stats.comments.slideInfo.mostUsedEmoji}</span>`; slides.push({ title: "Комментарии", value: stats.comments.slideInfo.commentCount, label: "комментариев оставлено", details: d }); }
-    if (stats.shares?.slideInfo?.shareCount > 0) slides.push({ title: "Репосты", value: stats.shares.slideInfo.shareCount, label: "раз ты поделился видео" });
-    if (stats.live?.slideInfo?.liveCount > 0) slides.push({ title: "Прямые эфиры", value: stats.live.slideInfo.liveCount, label: "Live-трансляций просмотрено" });
+    if (stats.likes?.slideInfo?.likeCount > 0) { const v = stats.likes.slideInfo.likeCount; slides.push({ title: "Лайки", value: v, label: "лайков поставлено", details: getCommentary(v, 'likes') }); }
+    if (stats.comments?.slideInfo?.commentCount > 0) { const v = stats.comments.slideInfo.commentCount; let d = getCommentary(v, 'comments'); if (stats.comments.slideInfo.mostUsedEmoji) d += ` Твой фаворит: <span style='font-size:1.5em;vertical-align:middle;'>${stats.comments.slideInfo.mostUsedEmoji}</span>`; slides.push({ title: "Комментарии", value: v, label: "комментариев оставлено", details: d }); }
+    if (stats.shares?.slideInfo?.shareCount > 0) { const v = stats.shares.slideInfo.shareCount; slides.push({ title: "Репосты", value: v, label: "раз ты поделился видео", details: getCommentary(v, 'shares') }); }
+    if (stats.live?.slideInfo?.liveCount > 0) { const v = stats.live.slideInfo.liveCount; slides.push({ title: "Прямые эфиры", value: v, label: "Live-трансляций просмотрено", details: getCommentary(v, 'live') }); }
     slides.push({ title: "Вот и всё!", value: '✨', label: `Твоя статистика за ${year} год`, details: "Ниже детальный отчет." });
     return slides;
 }
@@ -282,80 +456,96 @@ function prepareFullscreenSlidesData(stats, year) {
 const demoTikTokData = { "Profile": { "Profile Info": { ProfileMap: { userName: "Демо Пользователь", bioDescription: "Это демо-статистика!" } } }, Comment: { Comments: { CommentsList: [{ date: `${new Date().getFullYear()}-01-15 10:00:00`, comment: "Первый демо коммент 🎉" }, { date: `${new Date().getFullYear()}-03-20 12:30:00`, comment: "Еще один! 👍" }, { date: `${new Date().getFullYear()}-05-10 18:00:00`, comment: "Тестируем 🚀" }, { date: `${new Date().getFullYear() - 1}-11-10 18:00:00`, comment: "Прошлый год" }] } }, "Your Activity": { "Watch History": { VideoList: Array.from({ length: 1567 }).map((_, i) => ({ Date: generateRandomDateInYear(new Date().getFullYear()) })) }, "Like List": { ItemFavoriteList: Array.from({ length: 842 }).map((_, i) => ({ Date: generateRandomDateInYear(new Date().getFullYear()), link: `https://example.com/${i}` })) }, "Share History": { ShareHistoryList: Array.from({ length: 95 }).map((_, i) => ({ Date: generateRandomDateInYear(new Date().getFullYear()), Link: `https://example.com/${i}` })) } }, "Tiktok Live": { "Watch Live History": { WatchLiveMap: { "live1": { WatchTime: generateRandomDateInYear(new Date().getFullYear()) }, "live2": { WatchTime: generateRandomDateInYear(new Date().getFullYear()) }, "live3": { WatchTime: generateRandomDateInYear(new Date().getFullYear()) }, "live4": { WatchTime: `${new Date().getFullYear() - 1}-12-01 10:00:00` }, "live5": { WatchTime: generateRandomDateInYear(new Date().getFullYear()) } } } } };
 function generateRandomDateInYear(year) { const s = new Date(Date.UTC(year, 0, 1)), e = new Date(Date.UTC(year, 11, 31)); const d = new Date(s.getTime() + Math.random() * (e.getTime() - s.getTime())); return d.toISOString().replace('T', ' ').substring(0, 19); }
 
+function getPersona(stats) {
+    if (!stats) return "Загадка"; // Если нет данных
+
+    const views = stats.watchHistory?.slideInfo?.videoCount || 0;
+    const likes = stats.likes?.slideInfo?.likeCount || 0;
+    const comments = stats.comments?.slideInfo?.commentCount || 0;
+    const shares = stats.shares?.slideInfo?.shareCount || 0;
+    const avgSession = stats.watchHistory?.slideInfo?.averageSessionLength || 0;
+
+    // Простая логика - можно усложнять
+    if (views < 500 && likes < 100 && comments < 10) return "Скромный гость";
+    if (comments > 100 && comments > likes / 10) return "Активный комментатор";
+    if (likes > 5000 && likes > views / 2) return "Лайк-машина";
+    if (shares > 100 && shares > likes / 20) return "Амбассадор контента";
+    if (avgSession > 45) return "Марафонец ленты";
+    if (views > 10000) return "Заядлый зритель"; // как в примере 'Avid Binge-Watcher'
+    if (views > 2000) return "Постоянный зритель";
+
+    return "Уникальный пользователь"; // Общий вариант
+}
+
 // --- Image Generation & Sharing ---
 async function generateAndShareImage() {
-    if (!shareCard || !currentAnalysisResult || typeof html2canvas === 'undefined') { alert("Невозможно поделиться: данные не готовы или библиотека html2canvas не загружена."); updateStatus("Ошибка подготовки к шарингу", 'error'); return; }
-    console.log("Подготовка карточки для шаринга..."); updateStatus("Готовим картинку...", 'loading');
+    if (!shareCard || !currentAnalysisResult || typeof html2canvas === 'undefined') { alert("Невозможно поделиться: данные или библиотека не готовы."); updateStatus("Ошибка подготовки", 'error'); return; }
+    console.log("Подготовка карточки..."); updateStatus("Готовим картинку...", 'loading');
     const selectedYear = yearSelect.value; const stats = currentAnalysisResult;
     try {
+        if (shareUsernameEl) shareUsernameEl.textContent = stats.profile?.slideInfo?.userName || 'Пользователь';
         if (shareYearEl) shareYearEl.textContent = selectedYear;
-        if (shareUsernameEl) shareUsernameEl.textContent = stats.profile?.slideInfo?.userName || 'Неизвестно';
-        if (shareValuesEl && shareValuesEl.length >= 4) {
-            shareValuesEl[0].textContent = stats.watchHistory?.slideInfo?.videoCount.toLocaleString('ru-RU') || '0';
-            shareValuesEl[1].textContent = `~ ${stats.watchHistory?.slideInfo?.totalWatchTimeHours.toLocaleString('ru-RU') || '0'}`;
-            shareValuesEl[2].textContent = stats.likes?.slideInfo?.likeCount.toLocaleString('ru-RU') || '0';
-            shareValuesEl[3].textContent = stats.comments?.slideInfo?.commentCount.toLocaleString('ru-RU') || '0';
-        } else { console.warn("Не все элементы .share-stat-value найдены"); }
-    } catch (error) { console.error("Ошибка обновления данных карточки:", error); handleError("Ошибка подготовки данных для картинки."); return; }
-    await new Promise(resolve => setTimeout(resolve, 100)); // Delay for DOM update
-    console.log("Генерация изображения...");
+        const persona = getPersona(stats);
+        if (sharePersonaEl) sharePersonaEl.textContent = persona;
+        const videosEl = shareCard.querySelector('.share-videos-watched'); const timeEl = shareCard.querySelector('.share-watch-time'); const sessionsEl = shareCard.querySelector('.share-sessions'); const avgSessionEl = shareCard.querySelector('.share-avg-session'); const commentsEl = shareCard.querySelector('.share-comments'); const likesEl = shareCard.querySelector('.share-likes'); const emojiEl = shareCard.querySelector('.share-emoji');
+        const videoCount = stats.watchHistory?.slideInfo?.videoCount || 0; if (videosEl) videosEl.textContent = videoCount.toLocaleString('ru-RU');
+        const totalHours = stats.watchHistory?.slideInfo?.totalWatchTimeHours || 0; const totalDays = Math.round(totalHours / 24); if (timeEl) timeEl.textContent = totalDays > 0 ? `≈ ${totalDays.toLocaleString('ru-RU')} дн.` : `< 1 дн.`;
+        const sessionsCount = stats.watchHistory?.slideInfo?.watchSessions || 0; if (sessionsEl) sessionsEl.textContent = sessionsCount.toLocaleString('ru-RU');
+        const avgSessionMinutes = stats.watchHistory?.slideInfo?.averageSessionLength || 0; if (avgSessionEl) avgSessionEl.textContent = `${avgSessionMinutes.toLocaleString('ru-RU')} мин`;
+        const commentsCount = stats.comments?.slideInfo?.commentCount || 0; if (commentsEl) commentsEl.textContent = commentsCount.toLocaleString('ru-RU');
+        const likesCount = stats.likes?.slideInfo?.likeCount || 0; if (likesEl) likesEl.textContent = likesCount.toLocaleString('ru-RU');
+        if (emojiEl) emojiEl.textContent = stats.comments?.slideInfo?.mostUsedEmoji || '-';
+    } catch (error) { console.error("Ошибка обновления карточки:", error); handleError("Ошибка подготовки данных."); return; }
+    await new Promise(resolve => setTimeout(resolve, 150)); // Delay for DOM
+    console.log("Генерация изображения 1080x1920...");
     try {
-        const canvas = await html2canvas(shareCard, { useCORS: true, scale: window.devicePixelRatio || 2, backgroundColor: '#ffffff' });
-        console.log("Canvas сгенерирован."); const filename = `tiktok-stats-${selectedYear}.png`;
+        const canvas = await html2canvas(shareCard, {
+            useCORS: true,
+            scale: 1, // Используем масштаб 1, т.к. задаем точные размеры
+            backgroundColor: '#1a1a1a',
+            width: 1080, // Целевая ширина
+            height: 1920, // Целевая высота
+            windowWidth: 1080, // Для рендеринга стилей
+            windowHeight: 1920
+        });
+        console.log("Canvas готов."); const filename = `tiktok-stats-${selectedYear}.png`;
         canvas.toBlob(async (blob) => {
-            if (!blob) { updateStatus("Ошибка создания Blob", 'error'); console.error("Canvas toBlob returned null"); try { const dU = canvas.toDataURL('image/png'); downloadImageLink(dU, filename); } catch (e) { console.error("Fallback download error", e); handleError("Не удалось скачать изображение"); } return; }
-            const file = new File([blob], filename, { type: 'image/png' }); const shareData = { title: `Моя статистика TikTok за ${selectedYear}`, text: `Смотри мои итоги года в TikTok!`, files: [file] }; // Customize text
+            if (!blob) { updateStatus("Ошибка создания Blob", 'error'); console.error("Canvas toBlob null"); try { const dU = canvas.toDataURL('image/png'); downloadImageLink(dU, filename); } catch (e) { console.error("Fallback dl error", e); handleError("Не удалось скачать."); } return; }
+            const file = new File([blob], filename, { type: 'image/png' }); const shareText = `Смотри мои итоги года в TikTok! Сгенерировано здесь: https://viktormalyuchenko.github.io/tiktok-stats-analyzer/`; const shareData = { title: `Моя статистика TikTok ${selectedYear}`, text: shareText, files: [file] };
             if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-                console.log("Попытка Web Share API...");
-                try { await navigator.share(shareData); console.log('Успешно поделились'); updateStatus("Открыто окно шаринга...", 'success'); setTimeout(() => updateStatus('', 'loading'), 3000); }
-                catch (error) { if (error.name !== 'AbortError') { console.error('Ошибка Web Share API:', error); updateStatus("Ошибка шаринга, скачайте файл", 'error'); const dU = canvas.toDataURL('image/png'); downloadImageLink(dU, filename); } else { console.log("Шаринг отменен."); updateStatus('', 'loading'); } }
-            } else { console.log('Web Share API (для файлов) не поддерживается, предлагаем скачать.'); const dU = canvas.toDataURL('image/png'); downloadImageLink(dU, filename); }
+                console.log("Попытка Web Share...");
+                try { await navigator.share(shareData); console.log('Успешно'); updateStatus("Открыто окно шаринга...", 'success'); setTimeout(() => updateStatus('', 'loading'), 3000); }
+                catch (error) { if (error.name !== 'AbortError') { console.error('Ошибка Web Share:', error); updateStatus("Ошибка шаринга, скачайте", 'error'); const dU = canvas.toDataURL('image/png'); downloadImageLink(dU, filename); } else { console.log("Шаринг отменен."); updateStatus('', 'loading'); } }
+            } else { console.log('Web Share (files) не поддерживается, скачиваем.'); updateStatus("Web Share не поддерживается. Скачиваем картинку...", 'success'); setTimeout(() => { const dataUrl = canvas.toDataURL('image/png'); downloadImageLink(dataUrl, filename); }, 500); }
         }, 'image/png');
     } catch (error) { console.error("Ошибка html2canvas:", error); handleError("Не удалось сгенерировать изображение."); }
 }
 
-
 // --- Event Listeners Setup ---
 function setupEventListeners() {
-    // Initial buttons & Modals
     startButton?.addEventListener('click', () => showModal(howToModal));
     demoButton?.addEventListener('click', () => { console.log("Запуск демо..."); updateStatus('Загрузка демо...', 'loading'); if (yearSelect) yearSelect.value = new Date().getFullYear(); setTimeout(() => { processJsonText(JSON.stringify(demoTikTokData)); }, 300); });
     haveFileButton?.addEventListener('click', () => { hideModal(howToModal); showModal(selectFileModal); });
     window.addEventListener('click', (e) => { if (e.target === howToModal) hideModal(howToModal); if (e.target === selectFileModal) hideModal(selectFileModal); });
-
-    // File Input & Drag/Drop
-    uploadArea?.addEventListener('click', () => zipFileInput?.click());
+    // uploadArea?.addEventListener('click', () => zipFileInput?.click());
     zipFileInput?.addEventListener('change', handleFileSelect);
     uploadArea?.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.add('dragover'); if (uploadText) uploadText.textContent = 'Отпустите файл'; });
     uploadArea?.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.remove('dragover'); resetUploadText(); });
     uploadArea?.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.remove('dragover'); resetUploadText(); if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]); });
-
-    // Ready Screen Button
     showSlideshowButton?.addEventListener('click', () => { if (readyScreen) readyScreen.classList.remove('visible'); setTimeout(() => { if (readyScreen) readyScreen.style.display = 'none'; startFullscreenSlideshow(); }, 500); });
-
-    // Fullscreen Slideshow Navigation & Close
     closeSlideshowButton?.addEventListener('click', endFullscreenSlideshow);
     fsSlideshowArea?.addEventListener('click', (event) => { if (closeSlideshowButton && closeSlideshowButton.contains(event.target)) return; const cX = event.clientX, sW = window.innerWidth; if (cX < sW / 3) showPrevFullscreenSlide(); else if (cX > sW * 2 / 3) showNextFullscreenSlide(); });
     fsSlideshowArea?.addEventListener('keydown', (event) => { if (event.key === 'ArrowRight' || event.key === ' ') showNextFullscreenSlide(); else if (event.key === 'ArrowLeft') showPrevFullscreenSlide(); else if (event.key === 'Escape') endFullscreenSlideshow(); });
-
-    // Results Section Buttons
     resetButton?.addEventListener('click', resetToInitialState);
-    shareImageButton?.addEventListener('click', generateAndShareImage); // Share button listener
-
-    // Accordion (FAQ)
+    shareImageButton?.addEventListener('click', generateAndShareImage);
     accordionItems.forEach(item => { const h = item.querySelector('.accordion-header'), c = item.querySelector('.accordion-content'); h?.addEventListener('click', () => { const iA = item.classList.contains('active'); accordionItems.forEach(o => { if (o !== item) { o.classList.remove('active'); o.querySelector('.accordion-header')?.setAttribute('aria-expanded', 'false'); const oc = o.querySelector('.accordion-content'); if (oc) oc.style.maxHeight = null; } }); item.classList.toggle('active', !iA); h.setAttribute('aria-expanded', !iA); if (c) c.style.maxHeight = !iA ? c.scrollHeight + 40 + "px" : null; }); });
 }
 
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Critical element check
-    if (!mainContent || !fullscreenSlideshow || !mainResults || !shareCard || !readyScreen) {
-        console.error("Критические элементы разметки не найдены! Проверьте ID: mainContent, fullscreenSlideshow, mainResults, shareCard, readyScreen.");
-        document.body.innerHTML = '<p style="color: red; text-align: center; padding: 50px;">Ошибка: Не удалось загрузить интерфейс страницы. Пожалуйста, обновите.</p>';
-        return;
-    }
+    if (!mainContent || !fullscreenSlideshow || !mainResults || !shareCard || !readyScreen) { console.error("Критические элементы разметки не найдены!"); document.body.innerHTML = '<p style="color: red; text-align: center; padding: 50px;">Ошибка: Не удалось загрузить интерфейс страницы.</p>'; return; }
     getUserTimezone();
     populateYearSelect();
     setupEventListeners();
-    resetToInitialState(); // Set initial UI state
+    resetToInitialState();
 });
