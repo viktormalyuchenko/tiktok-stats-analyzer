@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-    /* Цветовая палитра */
+    /* Цветовая палитра (Светлая тема по умолчанию) */
     --primary-gradient: linear-gradient(60deg, #f95f62, #ff0050, #ff0050, #00f2ea);
     --primary-accent: #ff0050;
     --secondary-accent: #00f2ea;
@@ -14,6 +14,11 @@
     --border-color: #e2e8f0;
     --shadow-color-soft: rgba(45, 55, 72, 0.08);
     --shadow-color-medium: rgba(45, 55, 72, 0.12);
+    --bg-secondary-button: #EDF2F7;
+    /* Фон для secondary кнопок */
+    --bg-secondary-button-hover: #E2E8F0;
+    --text-secondary-button: var(--text-secondary);
+    --text-secondary-button-hover: var(--text-primary);
 
     /* Типографика */
     --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -46,6 +51,8 @@ body {
     padding: 40px 15px;
     overflow-x: hidden;
     /* Предотвратить горизонтальный скролл body */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Плавный переход темы */
 }
 
 /* --- Контейнер (Общий стиль для всех контейнеров) --- */
@@ -57,7 +64,10 @@ body {
     background-color: var(--bg-card);
     box-shadow: 0 12px 35px var(--shadow-color-soft);
     border-radius: var(--border-radius-large);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    /* Плавный переход темы */
 }
+
 
 /* --- Хедер --- */
 header {
@@ -65,6 +75,7 @@ header {
     margin-bottom: 50px;
     padding-bottom: 35px;
     border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
 h1 {
@@ -98,7 +109,6 @@ header p {
 /* --- Заголовки секций (H2) --- */
 .faq h2,
 #table h2 {
-    /* Убрали #slides h2 */
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -111,7 +121,6 @@ header p {
 
 .faq h2::after,
 #table h2::after {
-    /* Убрали #slides h2::after */
     content: '';
     position: absolute;
     bottom: 0;
@@ -144,8 +153,6 @@ button,
 #startButton,
 #haveFileButton,
 .modal-button[href],
-/* #tableButton, */
-/* Удалено */
 #showSlideshowButton,
 #downloadButton {
     /* Если будет */
@@ -158,8 +165,6 @@ button,
 #startButton:hover,
 #haveFileButton:hover,
 .modal-button[href]:hover,
-/* #tableButton:hover, */
-/* Удалено */
 #showSlideshowButton:hover,
 #downloadButton:hover {
     transform: translateY(-3px);
@@ -167,34 +172,33 @@ button,
     background-position: right center;
 }
 
-/* Второстепенная кнопка (Светлая) */
+/* Второстепенная кнопка (Светлая/Темная) */
 .secondary-button,
 .modal-button:not([href]),
-/* #backToSlidesButton, */
-/* Удалено */
 #demoButton,
-#resetButton {
-    background-color: #EDF2F7;
-    color: var(--text-secondary);
+#resetButton,
+#shareImageButton {
+    /* Добавили кнопку шаринга */
+    background-color: var(--bg-secondary-button);
+    color: var(--text-secondary-button);
+    border: 1px solid var(--border-color);
     box-shadow: none;
-    border: 1px solid transparent;
 }
 
 .secondary-button:hover,
 .modal-button:not([href]):hover,
-/* #backToSlidesButton:hover, */
-/* Удалено */
 #demoButton:hover,
-#resetButton:hover {
-    background-color: #E2E8F0;
-    color: var(--text-primary);
+#resetButton:hover,
+#shareImageButton:hover {
+    background-color: var(--bg-secondary-button-hover);
+    color: var(--text-secondary-button-hover);
+    border-color: var(--text-muted);
     transform: translateY(-2px);
     box-shadow: 0 4px 10px var(--shadow-color-soft);
 }
 
 #startButton {
     display: inline-block;
-    /* Изменено для ряда с демо */
     margin: 0;
     font-size: 1.1rem;
     padding: 14px 35px;
@@ -231,6 +235,8 @@ button,
     position: relative;
     text-align: center;
     animation: slideIn 0.4s ease-out;
+    transition: background-color 0.3s ease;
+    /* Плавный переход темы */
 }
 
 @keyframes fadeIn {
@@ -285,10 +291,11 @@ button,
 }
 
 .modal p code {
-    background-color: #edf2f7;
+    background-color: var(--bg-main);
     padding: 2px 5px;
     border-radius: 4px;
     font-size: 0.9em;
+    transition: background-color 0.3s ease;
 }
 
 .modal-button-container {
@@ -327,11 +334,13 @@ button,
     -webkit-appearance: none;
     -moz-appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234A5568'%3E%3Cpath d='M8 11.5a.75.75 0 0 1-.53-.22l-4-4a.75.75 0 1 1 1.06-1.06L8 9.69l3.47-3.47a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-.53.22z'/%3E%3C/svg%3E");
+    /* Стрелка по умолчанию */
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 16px 16px;
     padding-right: 35px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, color 0.3s ease, background-image 0.3s ease;
+    /* Добавили переходы для темы */
 }
 
 #yearSelect:focus {
@@ -359,6 +368,7 @@ button,
 .upload-area.dragover {
     border-color: var(--primary-accent);
     background-color: #FFF5F7;
+    /* Светлый акцент */
     transform: scale(1.02);
 }
 
@@ -395,6 +405,8 @@ button,
     border-radius: 8px;
     display: none;
     animation: fadeIn 0.3s;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Переход для темы */
 }
 
 #uploadStatus.status-loading {
@@ -415,6 +427,7 @@ button,
     background-color: #f0fff4;
 }
 
+
 /* --- Аккордеон (FAQ) --- */
 .faq {
     margin: 60px 0;
@@ -425,10 +438,12 @@ button,
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-medium);
     overflow: hidden;
+    transition: border-color 0.3s ease;
 }
 
 .accordion-item {
     border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
 .accordion-item:last-child {
@@ -474,7 +489,7 @@ button,
     background-color: var(--bg-main);
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out, background-color 0.3s ease, color 0.3s ease;
     font-size: 0.95rem;
     color: var(--text-secondary);
 }
@@ -504,7 +519,7 @@ button,
     padding-bottom: 60px;
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out, background-color 0.3s ease, box-shadow 0.3s ease;
     /* display: none; управляется JS */
 }
 
@@ -562,6 +577,7 @@ button,
     width: 100%;
     height: 100%;
     background-color: #111;
+    /* Всегда темный */
     z-index: 2000;
     display: flex;
     justify-content: center;
@@ -637,6 +653,9 @@ button,
     background-clip: text;
     padding: 5px 0;
     animation: fadeInText 0.8s 0.5s ease-out backwards;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 90%;
 }
 
 .fs-slide .fs-value.counting {
@@ -645,6 +664,7 @@ button,
     -webkit-background-clip: unset;
     background-clip: unset;
 }
+
 
 .fs-slide .fs-label {
     font-size: 1.4rem;
@@ -680,14 +700,11 @@ button,
     top: 25px;
     right: 30px;
     background: rgba(255, 255, 255, 0.15);
-    /* Чуть заметнее */
     color: rgba(255, 255, 255, 0.8);
-    /* Ярче иконка */
     border: none;
-    /* Круглая форма */
     border-radius: 50%;
+    /* Круглая */
     width: 45px;
-    /* Одинаковая ширина и высота */
     height: 45px;
     font-size: 1.3rem;
     cursor: pointer;
@@ -703,7 +720,6 @@ button,
     background: rgba(255, 255, 255, 0.25);
     color: #fff;
     transform: scale(1.1) rotate(90deg);
-    /* Добавим вращение для эффекта */
 }
 
 /* Прогресс бар */
@@ -721,14 +737,14 @@ button,
     width: 0%;
     height: 100%;
     background: var(--primary-gradient);
-    /* transition управляется JS для перезапуска */
+    /* transition управляется JS */
 }
 
 /* --- Контейнер с основными результатами (#mainResults) --- */
 #mainResults {
     opacity: 0;
     transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out, background-color 0.3s ease, box-shadow 0.3s ease;
     /* display: none; управляется JS */
 }
 
@@ -737,11 +753,10 @@ button,
     transform: translateY(0);
 }
 
-/* Секция #slides и связанные стили УДАЛЕНЫ */
-
 /* --- Таблица (внутри #mainResults) --- */
 #table {
     margin: 0;
+    /* Без отступов */
 }
 
 #table h2 {
@@ -761,21 +776,19 @@ button,
 }
 
 .table-responsive-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    /* overflow-x убран для переноса */
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-medium);
     box-shadow: 0 4px 15px var(--shadow-color-soft);
     margin-bottom: 35px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #statsTable {
     width: 100%;
-    /* УБРАЛИ min-width, чтобы разрешить перенос */
-    /* min-width: 600px; */
     border-collapse: collapse;
     table-layout: fixed;
-    /* ВАЖНО для переноса */
+    /* Важно для переноса */
 }
 
 #statsTable th,
@@ -788,9 +801,8 @@ button,
     /* Свойства для переноса текста */
     overflow-wrap: break-word;
     word-wrap: break-word;
-    /* Совместимость */
     white-space: normal;
-    /* Убедиться, что не nowrap */
+    transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
 
 #statsTable tr:last-child th,
@@ -816,17 +828,16 @@ button,
 #statsTable thead th:nth-child(1),
 #statsTable tbody th {
     width: 45%;
-    /* Ширина колонки параметра */
 }
 
 #statsTable thead th:nth-child(2),
 #statsTable tbody td {
     width: 55%;
-    /* Ширина колонки значения */
 }
 
 .group-header td {
     background-color: #E9EDF5;
+    /* Светлый по умолчанию */
     font-weight: 700;
     color: var(--text-primary);
     font-size: 1rem;
@@ -837,6 +848,7 @@ button,
     top: 48px;
     /* Примерная высота thead th */
     z-index: 4;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 #statsTable tbody tr.group-header:first-child td {
@@ -844,17 +856,14 @@ button,
 }
 
 #statsTable tbody th {
-    /* Название параметра */
     background-color: var(--bg-card);
     font-weight: 500;
     color: var(--text-secondary);
 }
 
 #statsTable tbody td {
-    /* Значение */
     background-color: var(--bg-card);
     color: var(--text-primary);
-    /* word-break уже задан выше */
     font-weight: 500;
 }
 
@@ -875,9 +884,25 @@ button,
     background-color: var(--bg-main);
 }
 
+/* Кнопки под результатами */
+.results-actions {
+    text-align: center;
+    margin-top: 30px;
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
 #resetButton {
     display: block;
-    margin: 25px auto;
+    /*margin: 25px auto; Управляется flex gap */
+}
+
+#shareImageButton {
+    display: block;
+    /*margin: 25px auto; */
 }
 
 /* --- SEO-текст и футер --- */
@@ -887,6 +912,7 @@ button,
     line-height: 1.8;
     padding-top: 40px;
     border-top: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
 .seo-text h2,
@@ -962,10 +988,156 @@ footer {
     margin-top: 50px;
     padding-top: 25px;
     border-top: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
 footer p {
     line-height: 1.5;
+}
+
+/* --- Переключатель Темы --- */
+.theme-switcher {
+    margin-top: 15px;
+}
+
+.theme-toggle-button {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.theme-toggle-button:hover {
+    color: var(--text-primary);
+    border-color: var(--text-secondary);
+    background-color: rgba(128, 128, 128, 0.1);
+    transform: scale(1.1) rotate(15deg);
+}
+
+.theme-toggle-button i {
+    position: absolute;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* --- Переключатель Темы - Стили иконок --- */
+/* По умолчанию (светлая тема) показываем луну, скрываем солнце */
+#themeIconSun {
+    display: none;
+}
+
+#themeIconMoon {
+    display: inline-block;
+    /* или block, если нужно */
+}
+
+/* --- Стили для Темной Темы --- */
+/* Применяются, когда JS добавляет класс 'dark-mode' к body */
+body.dark-mode {
+    /* Переопределяем переменные для темной темы */
+    --primary-gradient: linear-gradient(60deg, #ff476a, #ff1a60, #ff1a60, #00d9c8);
+    --primary-accent: #ff1a60;
+    --secondary-accent: #00f2ea;
+    --text-primary: #e2e8f0;
+    --text-secondary: #a0aec0;
+    --text-muted: #718096;
+    --bg-main: #1a202c;
+    --bg-card: #2d3748;
+    --border-color: #4a5568;
+    --shadow-color-soft: rgba(0, 0, 0, 0.2);
+    --shadow-color-medium: rgba(0, 0, 0, 0.3);
+    --bg-secondary-button: #4a5568;
+    --bg-secondary-button-hover: #5a667a;
+    --text-secondary-button: #cbd5e0;
+    --text-secondary-button-hover: #ffffff;
+
+    /* Стили для иконок в темной теме: показываем солнце, скрываем луну */
+    #themeIconSun {
+        display: inline-block;
+        /* или block */
+    }
+
+    #themeIconMoon {
+        display: none;
+    }
+
+    /* Переопределения для конкретных элементов в темной теме */
+    #yearSelect {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23cbd5e0'%3E%3Cpath d='M8 11.5a.75.75 0 0 1-.53-.22l-4-4a.75.75 0 1 1 1.06-1.06L8 9.69l3.47-3.47a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-.53.22z'/%3E%3C/svg%3E");
+    }
+
+    #yearSelect:focus {
+        box-shadow: 0 0 0 3px rgba(255, 26, 96, 0.25);
+    }
+
+    .accordion-header:hover {
+        background-color: #4a5568;
+    }
+
+    .accordion-content {
+        background-color: var(--bg-main);
+        /* Используем переменную */
+        color: var(--text-secondary);
+    }
+
+    #statsTable thead th {
+        background-color: #374151;
+        color: var(--text-primary);
+    }
+
+    #statsTable tbody tr:not(.group-header):hover th,
+    #statsTable tbody tr:not(.group-header):hover td {
+        background-color: #4a5568;
+    }
+
+    .upload-area:hover,
+    .upload-area.dragover {
+        background-color: #3b475b;
+        /* Чуть темнее основного фона карточки */
+    }
+
+    .modal p code {
+        background-color: var(--bg-main);
+        /* Используем переменную */
+    }
+
+    .group-header td {
+        /* Используем 'td', т.к. у вас было так в разметке */
+        background-color: #4a5568;
+        color: var(--text-primary);
+    }
+
+    #uploadStatus.status-loading {
+        color: #63b3ed;
+        /* Голубой посветлее */
+        background-color: #2c5282;
+        /* Темно-синий фон */
+    }
+
+    #uploadStatus.status-error {
+        color: #fc8181;
+        /* Красный посветлее */
+        background-color: #742a2a;
+        /* Темно-красный фон */
+    }
+
+    #uploadStatus.status-success {
+        color: #68d391;
+        /* Зеленый посветлее */
+        background-color: #2f6f4b;
+        /* Темно-зеленый фон */
+    }
 }
 
 /* --- Адаптивность --- */
@@ -1017,7 +1189,7 @@ footer p {
         font-size: 2.5rem;
     }
 
-    /* Полноэкранное шоу */
+    /* FS Slideshow */
     .fs-slide .fs-value {
         font-size: 4.5rem;
     }
@@ -1038,7 +1210,7 @@ footer p {
         font-size: 1.1rem;
     }
 
-    /* Таблица */
+    /* Table */
     #statsTable th,
     #statsTable td {
         padding: 12px 15px;
@@ -1047,15 +1219,13 @@ footer p {
 
     .group-header td {
         font-size: 0.95rem;
+        top: 44px;
+        /* Скорректировано под возможную высоту thead th */
     }
 
     #statsTable thead th {
         top: -1px;
-    }
-
-    .group-header td {
-        top: 44px;
-        /* Примерно */
+        /* Чтобы не было зазора */
     }
 
     /* SEO */
@@ -1122,9 +1292,15 @@ footer p {
         background-position: right 15px center;
     }
 
-    /* Полноэкранное шоу */
+    /* FS Slideshow */
     .fs-slide .fs-value {
         font-size: 3.5rem;
+    }
+
+    .fs-slide .fs-value-username {
+        /* Если будете использовать такой класс */
+        font-size: 3rem;
+        word-break: break-all;
     }
 
     .fs-slide .fs-label {
@@ -1141,7 +1317,6 @@ footer p {
         font-size: 1rem;
     }
 
-    /* Кнопка закрытия */
     .ready-content h2 {
         font-size: 1.8rem;
     }
@@ -1150,11 +1325,12 @@ footer p {
         font-size: 1rem;
     }
 
-    /* Таблица - разрешаем перенос, убираем min-width */
+    /* Table - разрешаем перенос */
     .table-responsive-wrapper {
         overflow-x: visible;
         border: none;
         box-shadow: none;
+        margin-bottom: 25px;
     }
 
     #statsTable th,
@@ -1163,22 +1339,17 @@ footer p {
         padding: 10px 8px;
     }
 
-    /* Меньше паддинг */
-    #statsTable thead th {
-        top: -1px;
-    }
-
     .group-header td {
         top: 40px;
-        /* Примерно */
+        /* Скорректировано */
     }
 
-    /* Убираем явную ширину колонок, чтобы браузер сам подбирал */
     #statsTable thead th:nth-child(1),
     #statsTable tbody th {
         width: auto;
     }
 
+    /* Авто ширина */
     #statsTable thead th:nth-child(2),
     #statsTable tbody td {
         width: auto;

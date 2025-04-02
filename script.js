@@ -541,11 +541,82 @@ function setupEventListeners() {
     accordionItems.forEach(item => { const h = item.querySelector('.accordion-header'), c = item.querySelector('.accordion-content'); h?.addEventListener('click', () => { const iA = item.classList.contains('active'); accordionItems.forEach(o => { if (o !== item) { o.classList.remove('active'); o.querySelector('.accordion-header')?.setAttribute('aria-expanded', 'false'); const oc = o.querySelector('.accordion-content'); if (oc) oc.style.maxHeight = null; } }); item.classList.toggle('active', !iA); h.setAttribute('aria-expanded', !iA); if (c) c.style.maxHeight = !iA ? c.scrollHeight + 40 + "px" : null; }); });
 }
 
+// --- Theme Switcher Logic ---
+const themeToggleButton = document.getElementById('themeToggleButton');
+const themeIconMoon = document.getElementById('themeIconMoon');
+const themeIconSun = document.getElementById('themeIconSun');
+const bodyElement = document.body;
+const currentThemeLSKey = 'themePreference'; // Ключ для localStorage
+
+/**
+ * Применяет выбранную тему (light/dark)
+ * @param {string} theme - 'light' или 'dark'
+ */
+const applyTheme = (theme) => {
+    if (theme === 'dark') {
+        bodyElement.classList.add('dark-mode');
+        themeToggleButton?.setAttribute('aria-label', 'Переключить на светлую тему');
+    } else {
+        bodyElement.classList.remove('dark-mode');
+        themeToggleButton?.setAttribute('aria-label', 'Переключить на темную тему');
+    }
+    // Сохраняем выбор в localStorage
+    try {
+        localStorage.setItem(currentThemeLSKey, theme);
+    } catch (e) {
+        console.warn("Не удалось сохранить тему в localStorage:", e);
+    }
+};
+
+/**
+ * Определяет и возвращает начальную тему
+ * @returns {string} 'light' или 'dark'
+ */
+const determineInitialTheme = () => {
+    let initialTheme = 'light'; // По умолчанию светлая
+    try {
+        const savedTheme = localStorage.getItem(currentThemeLSKey);
+        if (savedTheme) {
+            initialTheme = savedTheme;
+        } else {
+            // Если в localStorage нет, проверяем системные настройки
+            // if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            //     initialTheme = 'dark';
+            // }
+        }
+    } catch (e) {
+        console.warn("Не удалось получить тему из localStorage или media query:", e);
+        // В случае ошибки оставляем 'light'
+    }
+    console.log(`Начальная тема: ${initialTheme}`);
+    return initialTheme;
+};
+
+// --- Theme Switcher Initialization ---
+function setupThemeSwitcher() {
+    if (!themeToggleButton || !themeIconMoon || !themeIconSun) {
+        console.error("Элементы переключателя тем не найдены!");
+        return;
+    }
+
+    // Применяем начальную тему при загрузке страницы
+    const initialTheme = determineInitialTheme();
+    applyTheme(initialTheme);
+
+    // Добавляем обработчик клика на кнопку
+    themeToggleButton.addEventListener('click', () => {
+        const isDarkMode = bodyElement.classList.contains('dark-mode');
+        const newTheme = isDarkMode ? 'light' : 'dark';
+        applyTheme(newTheme);
+    });
+}
+
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
     if (!mainContent || !fullscreenSlideshow || !mainResults || !shareCard || !readyScreen) { console.error("Критические элементы разметки не найдены!"); document.body.innerHTML = '<p style="color: red; text-align: center; padding: 50px;">Ошибка: Не удалось загрузить интерфейс страницы.</p>'; return; }
     getUserTimezone();
     populateYearSelect();
     setupEventListeners();
+    setupThemeSwitcher(); // <--- ДОБАВЬ ЭТУ СТРОКУ
     resetToInitialState();
 });
