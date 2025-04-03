@@ -10,92 +10,141 @@
     <meta name="keywords"
         content="TikTok, статистика, итоги года, данные, анализ, просмотры, лайки, комментарии, скачать, бесплатно, активность, отчет, демо, поделиться">
 
-    <!-- Стили -->
+    <!-- Open Graph / Facebook Card Meta Tags -->
+    <meta property="og:title" content="Твоя статистика TikTok - Узнай итоги своей активности за год">
+    <meta property="og:description"
+        content="Подведите итоги года в TikTok! Узнайте, сколько видео вы посмотрели, сколько лайков поставили и другую интересную статистику. Загрузите свои данные и получите персональный отчет.">
+    <meta property="og:image" content="https://viktormalyuchenko.github.io/tiktok-stats-analyzer/images/og-image.png">
+    <meta property="og:url" content="https://viktormalyuchenko.github.io/tiktok-stats-analyzer/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Твоя статистика TikTok">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Твоя статистика TikTok - Узнай итоги своей активности за год">
+    <meta name="twitter:description"
+        content="Подведите итоги года в TikTok! Узнайте, сколько видео вы посмотрели, сколько лайков поставили и другую интересную статистику. Загрузите свои данные и получите персональный отчет.">
+    <meta name="twitter:image" content="https://viktormalyuchenko.github.io/tiktok-stats-analyzer/images/og-image.png">
+    <meta name="twitter:url" content="https://viktormalyuchenko.github.io/tiktok-stats-analyzer/">
+
     <link rel="stylesheet" href="style.css">
 
-    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome для иконок -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- Скрипты -->
-    <!-- html2canvas для генерации картинки -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- JSZip для работы с ZIP архивами -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
-        integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- Ваш основной скрипт -->
     <script defer src="script.js"></script>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+            m[i].l = 1 * new Date();
+            for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+            k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+        })
+            (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-    <!-- JSON-LD Schema для FAQ -->
+        ym(99841001, "init", {
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true
+        });
+    </script>
+    <noscript>
+        <div><img src="https://mc.yandex.ru/watch/99841001" style="position:absolute; left:-9999px;" alt="" /></div>
+    </noscript>
+    <!-- /Yandex.Metrika counter -->
     <script type="application/ld+json">
         {
           "@context": "https://schema.org",
-          "@type": "FAQPage",
-          "mainEntity": [{
-            "@type": "Question",
-            "name": "Что такое 'Твоя статистика TikTok'?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "'Твоя статистика TikTok' - это неофициальный инструмент, который позволяет вам проанализировать вашу активность в TikTok, используя файл с данными, который можно скачать из TikTok."
+          "@graph": [
+            {
+              "@type": "SoftwareApplication",
+              "name": "Твоя статистика TikTok - Анализатор итогов года",
+              "description": "Бесплатный неофициальный инструмент для анализа вашей статистики TikTok за год. Загрузите свои данные из TikTok (JSON) и получите наглядный отчет о просмотрах, лайках, комментариях и времени, проведенном в приложении. Вся обработка происходит локально в браузере.",
+              "applicationCategory": "WebApplication",
+              "operatingSystem": "Web",
+              "url": "https://viktormalyuchenko.github.io/tiktok-stats-analyzer/",
+              "screenshot": "https://viktormalyuchenko.github.io/tiktok-stats-analyzer/images/og-image.png",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "RUB"
+              },
+              "keywords": "TikTok, статистика, итоги года, анализ данных, просмотры, лайки, комментарии, скачать данные, TikTok Wrapped, бесплатно, безопасно",
+               "author": {
+                    "@type": "Person",
+                    "name": "Viktor Malyuchenko",
+                    "url": "https://viktormalyuchenko.github.io"
+               }
+            },
+            {
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "Что такое 'Твоя статистика TikTok'?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "'Твоя статистика TikTok' - это неофициальный инструмент, который позволяет вам проанализировать вашу активность в TikTok, используя файл с данными, который можно скачать из TikTok."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Как скачать данные из TikTok?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Откройте приложение TikTok и перейдите в свой профиль. Нажмите на кнопку меню (☰) в правом верхнем углу. Выберите \"Настройки и конфиденциальность\" → \"Аккаунт\" → \"Скачать данные\". Следуйте инструкциям на экране, выберите формат файла JSON и запросите данные. TikTok подготовит файл (это может занять несколько дней) и уведомит вас, когда он будет готов к скачиванию."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Почему нужно ждать файл от TikTok?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "TikTok собирает большой объем данных о вашей активности. Подготовка полного архива требует времени на их серверах. Обычно это занимает от 24 до 72 часов, но иногда может быть дольше."
+                    }
+                  },
+                  {
+                    "@type": "Question",
+                    "name": "Безопасно ли загружать сюда мой файл?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Да, абсолютно безопасно. Вся обработка вашего файла происходит исключительно в вашем браузере на вашем устройстве. Ваши данные никуда не загружаются и не передаются на наши или какие-либо другие серверы. Мы не храним вашу информацию. Кроме того, сам файл данных от TikTok не содержит вашего пароля."
+                    }
+                  },
+                   {
+                    "@type": "Question",
+                    "name": "Какие данные анализируются?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Мы анализируем историю просмотров видео, лайки, комментарии, репосты и просмотренные Live-трансляции (если эта информация доступна в вашем файле данных) за выбранный год."
+                    }
+                   },
+                   {
+                    "@type": "Question",
+                    "name": "Почему некоторые цифры кажутся неточными?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Точность статистики зависит от полноты данных в предоставленном вами файле от TikTok. Иногда TikTok может предоставлять неполные данные или использовать специфические форматы дат/времени. Мы стараемся интерпретировать данные максимально корректно, но небольшие расхождения возможны. Например, точное время просмотра каждого видео не предоставляется, поэтому общее время просмотра является оценкой."
+                    }
+                   },
+                   {
+                    "@type": "Question",
+                    "name": "Это официальный сервис от TikTok?",
+                    "acceptedAnswer": {
+                      "@type": "Answer",
+                      "text": "Нет, это неофициальный проект, созданный независимыми разработчиками для развлечения и анализа данных. Он не связан с компанией TikTok или ByteDance."
+                    }
+                }
+              ]
             }
-          }, {
-            "@type": "Question",
-            "name": "Как скачать данные из TikTok?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Откройте приложение TikTok и перейдите в свой профиль. Нажмите на кнопку меню (☰) в правом верхнем углу. Выберите \"Настройки и конфиденциальность\" → \"Аккаунт\" → \"Скачать данные\". Следуйте инструкциям на экране, выберите формат файла JSON и запросите данные. TikTok подготовит файл (это может занять несколько дней) и уведомит вас, когда он будет готов к скачиванию."
-            }
-          },
-           {
-            "@type": "Question",
-            "name": "Почему нужно ждать файл от TikTok?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "TikTok собирает большой объем данных о вашей активности. Подготовка полного архива требует времени на их серверах. Обычно это занимает от 24 до 72 часов, но иногда может быть дольше."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Безопасно ли загружать сюда мой файл?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Да, абсолютно безопасно. Вся обработка вашего файла происходит исключительно в вашем браузере на вашем устройстве. Ваши данные никуда не загружаются и не передаются на наши или какие-либо другие серверы. Мы не храним вашу информацию. Кроме того, сам файл данных от TikTok не содержит вашего пароля."
-            }
-          },
-           {
-            "@type": "Question",
-            "name": "Какие данные анализируются?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Мы анализируем историю просмотров видео, лайки, комментарии, репосты и просмотренные Live-трансляции (если эта информация доступна в вашем файле данных) за выбранный год."
-            }
-           },
-           {
-            "@type": "Question",
-            "name": "Почему некоторые цифры кажутся неточными?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Точность статистики зависит от полноты данных в предоставленном вами файле от TikTok. Иногда TikTok может предоставлять неполные данные или использовать специфические форматы дат/времени. Мы стараемся интерпретировать данные максимально корректно, но небольшие расхождения возможны. Например, точное время просмотра каждого видео не предоставляется, поэтому общее время просмотра является оценкой."
-            }
-           },
-           {
-            "@type": "Question",
-            "name": "Это официальный сервис от TikTok?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Нет, это неофициальный проект, созданный независимыми разработчиками для развлечения и анализа данных. Он не связан с компанией TikTok или ByteDance."
-            }
-          }]
+          ]
         }
-    </script>
+        </script>
 </head>
 
 <body>
@@ -283,8 +332,8 @@
             <p>Создано энтузиастами. Не связано с TikTok™. Ваши данные обрабатываются локально.</p>
             <div class="theme-switcher" style="margin-top: 15px;">
                 <button id="themeToggleButton" class="theme-toggle-button" aria-label="Переключить тему оформления">
-                    <i class="fas fa-moon" id="themeIconMoon"></i> <!-- Иконка луны по умолчанию -->
-                    <i class="fas fa-sun" id="themeIconSun"></i> <!-- Иконка солнца (скрыта) -->
+                    <i class="fas fa-moon" id="themeIconMoon"></i>
+                    <i class="fas fa-sun" id="themeIconSun"></i>
                 </button>
             </div>
         </footer>
@@ -319,10 +368,10 @@
     <div id="mainResults" class="container" style="display: none;">
 
         <!-- Секция таблицы -->
-        <section id="table" aria-labelledby="table-heading"> <!-- Добавлен aria-labelledby -->
-            <h2 id="table-heading">Ваша детальная статистика TikTok</h2> <!-- Добавлен ID для aria -->
+        <section id="table" aria-labelledby="table-heading">
+            <h2 id="table-heading">Ваша детальная статистика TikTok</h2>
             <p>Все данные представлены за <span id="tableYear"></span> год.</p>
-            <div class="table-responsive-wrapper"> <!-- Обертка для скролла таблицы -->
+            <div class="table-responsive-wrapper">
                 <table id="statsTable" aria-live="polite">
                     <tbody>
                         <!-- Таблица заполняется из JS -->
@@ -341,7 +390,7 @@
 
     </div> <!-- Конец #mainResults -->
 
-    <!-- НОВЫЙ БЛОК: Скрытый контейнер для генерации картинки (1080x1920) -->
+    <!-- Скрытый контейнер для генерации картинки (1080x1920) -->
     <div id="shareCardContainer" aria-hidden="true"
         style="position: absolute; left: -9999px; top: -9999px; background: #1a1a1a;">
         <!-- Карточка 9:16 (1080x1920) -->

@@ -187,12 +187,47 @@ function handleFile(file) {
     else { handleError('Не удалось определить тип файла.'); resetUploadText(); } // Should not happen often
 }
 function handleZipFile(file) {
-    if (typeof JSZip === 'undefined') { handleError("Библиотека JSZip не загружена."); return; }
-    JSZip.loadAsync(file).then((zip) => {
-        const jsonFileKey = Object.keys(zip.files).find(fileName => /user[_ ]?data.*\.json$/i.test(fileName));
-        if (!jsonFileKey) throw new Error('Файл user_data*.json не найден в ZIP-архиве.');
-        updateStatus('Извлечение JSON...', 'loading'); return zip.file(jsonFileKey).async('text');
-    }).then(processJsonText).catch(error => handleError(`Ошибка обработки ZIP: ${error.message}`, error));
+    // Проверяем, загружена ли библиотека JSZip
+    if (typeof JSZip === 'undefined') {
+        updateStatus('Загрузка компонента для ZIP...', 'loading');
+        // Динамический импорт JSZip
+        import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js')
+            .then(() => {
+                // Проверяем еще раз, что JSZip теперь доступен (на всякий случай)
+                if (typeof JSZip === 'undefined') {
+                    throw new Error('Не удалось инициализировать библиотеку JSZip после загрузки.');
+                }
+                console.log("JSZip загружен динамически.");
+                // Теперь продолжаем обработку ZIP-файла
+                processZipContent(file);
+            })
+            .catch(error => {
+                console.error("Ошибка динамической загрузки JSZip:", error);
+                handleError("Не удалось загрузить компонент для обработки ZIP. Попробуйте обновить страницу.", error);
+            });
+    } else {
+        // Если JSZip уже был загружен ранее (например, при повторной загрузке)
+        processZipContent(file);
+    }
+}
+
+// Вынесем логику обработки в отдельную функцию для чистоты
+function processZipContent(file) {
+    updateStatus('Обработка ZIP-архива...', 'loading');
+    JSZip.loadAsync(file)
+        .then((zip) => {
+            const jsonFileKey = Object.keys(zip.files).find(fileName => /user[_ ]?data.*\.json$/i.test(fileName));
+            if (!jsonFileKey) {
+                throw new Error('Файл user_data*.json не найден в ZIP-архиве.');
+            }
+            updateStatus('Извлечение JSON...', 'loading');
+            return zip.file(jsonFileKey).async('text');
+        })
+        .then(processJsonText) // processJsonText уже существует
+        .catch(error => {
+            handleError(`Ошибка обработки ZIP: ${error.message}`, error);
+            resetUploadText(); // Убедись, что эта функция сбрасывает текст
+        });
 }
 function handleJsonFile(file) { const reader = new FileReader(); reader.onload = (e) => processJsonText(e.target.result); reader.onerror = (e) => handleError('Ошибка чтения JSON файла.', e); reader.readAsText(file); }
 
@@ -479,8 +514,32 @@ function getPersona(stats) {
 
 // --- Image Generation & Sharing ---
 async function generateAndShareImage() {
-    if (!shareCard || !currentAnalysisResult || typeof html2canvas === 'undefined') { alert("Невозможно поделиться: данные или библиотека не готовы."); updateStatus("Ошибка подготовки", 'error'); return; }
-    console.log("Подготовка карточки..."); updateStatus("Готовим картинку...", 'loading');
+
+    if (!shareCard || !currentAnalysisResult) {
+        alert("Невозможно поделиться: данные не готовы.");
+        updateStatus("Ошибка подготовки", 'error');
+        return;
+    }
+
+    // Проверяем, загружен ли html2canvas
+    if (typeof html2canvas === 'undefined') {
+        updateStatus('Загрузка компонента для картинки...', 'loading');
+        try {
+            // Динамический импорт html2canvas. Важно: import() сам по себе не делает переменную глобальной.
+            // Мы можем просто дождаться его завершения.
+            await import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+            // Проверяем еще раз после загрузки
+            if (typeof html2canvas === 'undefined') {
+                throw new Error('Не удалось инициализировать библиотеку html2canvas после загрузки.');
+            }
+            console.log("html2canvas загружен динамически.");
+            // Теперь html2canvas доступен глобально (т.к. скрипт его так регистрирует)
+        } catch (error) {
+            console.error("Ошибка динамической загрузки html2canvas:", error);
+            handleError("Не удалось загрузить компонент для создания изображения. Попробуйте обновить страницу.", error);
+            return; // Прерываем выполнение, если загрузка не удалась
+        }
+    } console.log("Подготовка карточки..."); updateStatus("Готовим картинку...", 'loading');
     const selectedYear = yearSelect.value; const stats = currentAnalysisResult;
     try {
         if (shareUsernameEl) shareUsernameEl.textContent = stats.profile?.slideInfo?.userName || 'Пользователь';
