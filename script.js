@@ -57,6 +57,16 @@ const SLIDESHOW_INTERVAL = 5500; // ms per slide
 
 // --- Helper Functions ---
 
+function reachMetrikaGoal(goalName) {
+    const metrikaCounterId = 99841001; // Ваш ID счетчика
+    if (typeof ym === 'function') {
+        ym(metrikaCounterId, 'reachGoal', goalName);
+        console.log(`Metrika goal reached: ${goalName}`); // Лог для отладки, можно убрать потом
+    } else {
+        console.warn(`Yandex Metrika 'ym' function not available when trying to reach goal: ${goalName}`);
+    }
+}
+
 /** Parses TikTok date string (YYYY-MM-DD HH:MM:SS) into a Date object (UTC). */
 function parseDateString(dateString) {
     if (!dateString || typeof dateString !== 'string' || dateString === "N/A") return null;
@@ -239,6 +249,7 @@ function processJsonText(jsonText) {
         updateStatus('Анализ данных...', 'loading'); const selectedYear = parseInt(yearSelect.value, 10);
         currentAnalysisResult = analyzeTikTokData(tiktokData, selectedYear); // Analyze and store results
         if (!currentAnalysisResult) { handleError("Не удалось проанализировать данные."); return; }
+        reachMetrikaGoal('file_process_success');
         fsSlidesData = prepareFullscreenSlidesData(currentAnalysisResult, selectedYear); // Prepare FS slides
         if (mainContent) mainContent.style.display = 'none'; updateStatus('', 'loading'); hideModal(selectFileModal);
         if (readyScreen) { readyScreen.style.display = 'block'; requestAnimationFrame(() => readyScreen.classList.add('visible')); }
@@ -467,6 +478,8 @@ function startFullscreenSlideshow() {
 function endFullscreenSlideshow() {
     if (!fullscreenSlideshow || !mainResults || !tableSection || !tableYearSpan || !yearSelect) { console.error("Missing elements for ending slideshow"); return; }
     clearTimeout(slideshowTimeoutId); fullscreenSlideshow.classList.remove('visible'); document.body.style.overflow = '';
+    reachMetrikaGoal('slideshow_complete');
+    reachMetrikaGoal('view_results_table');
     setTimeout(() => {
         fullscreenSlideshow.style.display = 'none'; mainResults.style.display = 'block';
         requestAnimationFrame(() => mainResults.classList.add('visible'));
@@ -514,6 +527,7 @@ function getPersona(stats) {
 
 // --- Image Generation & Sharing ---
 async function generateAndShareImage() {
+    reachMetrikaGoal('share_results');
 
     if (!shareCard || !currentAnalysisResult) {
         alert("Невозможно поделиться: данные не готовы.");
@@ -582,8 +596,19 @@ async function generateAndShareImage() {
 
 // --- Event Listeners Setup ---
 function setupEventListeners() {
-    startButton?.addEventListener('click', () => showModal(howToModal));
-    demoButton?.addEventListener('click', () => { console.log("Запуск демо..."); updateStatus('Загрузка демо...', 'loading'); if (yearSelect) yearSelect.value = new Date().getFullYear(); setTimeout(() => { processJsonText(JSON.stringify(demoTikTokData)); }, 300); });
+    startButton?.addEventListener('click', () => {
+        reachMetrikaGoal('start_analysis');
+        showModal(howToModal)
+    });
+    demoButton?.addEventListener('click', () => {
+        reachMetrikaGoal('view_demo');
+        console.log("Запуск демо...");
+        updateStatus('Загрузка демо...', 'loading');
+        if (yearSelect) yearSelect.value = new Date().getFullYear();
+        setTimeout(() => {
+            processJsonText(JSON.stringify(demoTikTokData));
+        }, 300);
+    });
     haveFileButton?.addEventListener('click', () => { hideModal(howToModal); showModal(selectFileModal); });
     window.addEventListener('click', (e) => { if (e.target === howToModal) hideModal(howToModal); if (e.target === selectFileModal) hideModal(selectFileModal); });
     // uploadArea?.addEventListener('click', () => zipFileInput?.click());
@@ -591,11 +616,21 @@ function setupEventListeners() {
     uploadArea?.addEventListener('dragover', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.add('dragover'); if (uploadText) uploadText.textContent = 'Отпустите файл'; });
     uploadArea?.addEventListener('dragleave', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.remove('dragover'); resetUploadText(); });
     uploadArea?.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); uploadArea.classList.remove('dragover'); resetUploadText(); if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]); });
-    showSlideshowButton?.addEventListener('click', () => { if (readyScreen) readyScreen.classList.remove('visible'); setTimeout(() => { if (readyScreen) readyScreen.style.display = 'none'; startFullscreenSlideshow(); }, 500); });
+    showSlideshowButton?.addEventListener('click', () => {
+        reachMetrikaGoal('show_slideshow');
+        if (readyScreen) readyScreen.classList.remove('visible');
+        setTimeout(() => {
+            if (readyScreen) readyScreen.style.display = 'none';
+            startFullscreenSlideshow();
+        }, 500);
+    });
     closeSlideshowButton?.addEventListener('click', endFullscreenSlideshow);
     fsSlideshowArea?.addEventListener('click', (event) => { if (closeSlideshowButton && closeSlideshowButton.contains(event.target)) return; const cX = event.clientX, sW = window.innerWidth; if (cX < sW / 3) showPrevFullscreenSlide(); else if (cX > sW * 2 / 3) showNextFullscreenSlide(); });
     fsSlideshowArea?.addEventListener('keydown', (event) => { if (event.key === 'ArrowRight' || event.key === ' ') showNextFullscreenSlide(); else if (event.key === 'ArrowLeft') showPrevFullscreenSlide(); else if (event.key === 'Escape') endFullscreenSlideshow(); });
-    resetButton?.addEventListener('click', resetToInitialState);
+    resetButton?.addEventListener('click', () => {
+        reachMetrikaGoal('reset_analysis');
+        resetToInitialState();
+    });
     shareImageButton?.addEventListener('click', generateAndShareImage);
     accordionItems.forEach(item => { const h = item.querySelector('.accordion-header'), c = item.querySelector('.accordion-content'); h?.addEventListener('click', () => { const iA = item.classList.contains('active'); accordionItems.forEach(o => { if (o !== item) { o.classList.remove('active'); o.querySelector('.accordion-header')?.setAttribute('aria-expanded', 'false'); const oc = o.querySelector('.accordion-content'); if (oc) oc.style.maxHeight = null; } }); item.classList.toggle('active', !iA); h.setAttribute('aria-expanded', !iA); if (c) c.style.maxHeight = !iA ? c.scrollHeight + 40 + "px" : null; }); });
 }
