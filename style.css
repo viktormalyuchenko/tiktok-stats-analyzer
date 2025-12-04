@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 :root {
+  color-scheme: dark;
   /* Основные цвета (TikTok Brand Colors) */
   --color-tiktok-cyan: rgb(110, 207, 203);
   --color-tiktok-pink: rgb(237, 29, 81);
@@ -1683,5 +1684,50 @@ footer {
   }
   .persona-title {
     font-size: 2.2rem;
+  }
+  .hero-section {
+    padding-top: 20px; /* Было 40px */
+    padding-bottom: 30px;
+  }
+
+  /* Уменьшаем бейдж */
+  .hero-badge {
+    font-size: 0.75rem;
+    margin-bottom: 15px;
+    padding: 4px 10px;
+  }
+
+  /* Уменьшаем заголовок, чтобы он не занимал пол-экрана */
+  h1 {
+    font-size: 2.2rem; /* Было 2.8rem или 4rem */
+    margin-bottom: 10px;
+  }
+
+  /* Уменьшаем описание */
+  .hero-desc {
+    font-size: 1rem;
+    margin-bottom: 20px; /* Уменьшаем отступ до кнопок */
+    line-height: 1.4;
+  }
+
+  /* Кнопки на всю ширину и компактнее */
+  .header-buttons {
+    flex-direction: column; /* Кнопки друг под другом */
+    gap: 10px;
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  #startButton,
+  #demoButton {
+    width: 100%; /* На всю ширину удобнее нажимать */
+    margin: 0;
+    padding: 12px 20px; /* Чуть меньше паддинг */
+  }
+
+  /* Визуал (карточки) можно чуть уменьшить или сдвинуть ниже */
+  .hero-visual {
+    margin-top: 40px;
+    transform: scale(0.7); /* Делаем превью меньше */
   }
 }
