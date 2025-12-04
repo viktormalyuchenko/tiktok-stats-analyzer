@@ -470,43 +470,91 @@ button,
 .modal {
   display: none;
   position: fixed;
-  z-index: 1000;
+  z-index: 2000; /* Поверх всего */
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85); /* Более темный фон */
+  background-color: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(5px);
-  animation: fadeIn 0.3s ease;
+
+  /* ВАЖНО для скролла: */
+  overflow-y: auto; /* Разрешаем скролл самого контейнера */
+  overflow-x: hidden;
+  padding: 10px; /* Отступ от краев экрана на мобилках */
+
+  /* Центрирование через Flexbox */
+  /* display: flex ставим через JS или класс visible, но для структуры: */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Когда модалка активна, добавляем display: flex */
+.modal[style*="display: block"] {
+  display: flex !important;
 }
 
 .modal-content {
   background-color: var(--bg-card);
-  margin: 8% auto;
-  padding: 40px;
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-large);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  max-width: 650px;
-  width: 90%;
-  text-align: center;
-  color: var(--text-primary);
+
+  width: 100%;
+  max-width: 600px;
+  padding: 40px;
+
+  /* ВАЖНО: */
+  margin: auto; /* Авто-отступы центрируют блок внутри flex-контейнера */
+  position: relative;
+
+  /* Если контент слишком длинный, скроллится само окно (body модалки) */
+  max-height: 90vh; /* Не больше 90% высоты экрана */
+  overflow-y: auto; /* Скролл внутри карточки, если она не влезает */
+
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Типографика внутри модалки */
+.modal h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: white;
 }
 
 .modal p,
 .modal ol {
-  color: var(--text-secondary);
   text-align: left;
-  line-height: 1.7;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 15px;
 }
-.modal p strong {
-  color: var(--text-primary);
+
+.modal ol {
+  padding-left: 20px;
+  margin-bottom: 30px;
 }
-.modal p code {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: var(--color-tiktok-cyan);
+
+.modal li {
+  margin-bottom: 10px;
+}
+
+.modal-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 30px;
 }
 
 /* --- Область загрузки --- */
@@ -1594,6 +1642,23 @@ footer {
 
 /* Телефоны (до 600px) */
 @media (max-width: 600px) {
+  .modal-content {
+    padding: 25px 20px;
+    max-height: 85vh; /* Чуть меньше на мобилках из-за панели браузера */
+  }
+
+  .modal h2 {
+    font-size: 1.5rem;
+  }
+
+  /* Кнопки на всю ширину на мобилке, чтобы удобно нажимать */
+  .modal-button,
+  .modal-button-container a,
+  .modal-button-container button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .dashboard-header {
     flex-direction: column;
     text-align: center;
