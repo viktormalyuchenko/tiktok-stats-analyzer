@@ -1,10 +1,8 @@
 // --- Глобальные переменные ---
 const startButton = document.getElementById("startButton");
 const demoButton = document.getElementById("demoButton");
-const howToModal = document.getElementById("howToModal");
 const haveFileButton = document.getElementById("haveFileButton");
-const selectFileModal = document.getElementById("selectFileModal");
-const yearSelect = document.getElementById("yearSelect");
+const uploadModal = document.getElementById("uploadModal");
 const uploadArea = document.getElementById("uploadArea");
 const zipFileInput = document.getElementById("zipFileInput");
 const uploadText = document.getElementById("uploadText");
@@ -76,17 +74,6 @@ function resetToInitialState() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function populateYearSelect() {
-  const currentYear = new Date().getFullYear();
-  yearSelect.innerHTML = "";
-  for (let year = currentYear; year >= 2017; year--) {
-    const option = document.createElement("option");
-    option.value = year;
-    option.textContent = year;
-    yearSelect.appendChild(option);
-  }
-}
-
 // --- Обработка файлов ---
 function handleFile(file) {
   if (!file) return;
@@ -138,7 +125,7 @@ function processJsonText(jsonText) {
   try {
     updateStatus("Анализ данных...", "loading");
     const rawData = JSON.parse(jsonText);
-    const selectedYear = parseInt(yearSelect.value, 10);
+    const selectedYear = new Date().getFullYear();
 
     // ВЫЗОВ ANALYZER.JS
     if (typeof TikTokAnalyzer === "undefined")
@@ -152,7 +139,7 @@ function processJsonText(jsonText) {
 
     // Успех
     reachMetrikaGoal("analysis_success");
-    hideModal(selectFileModal);
+    hideModal(uploadModal);
     mainContent.style.display = "none";
 
     // Подготовка слайдов (тоже можно вынести, но пока оставим тут для генерации HTML)
@@ -719,20 +706,21 @@ function reachMetrikaGoal(goal) {
 
 // --- Инициализация ---
 document.addEventListener("DOMContentLoaded", () => {
-  populateYearSelect();
-
   // Event Listeners
-  startButton?.addEventListener("click", () => showModal(howToModal));
-  haveFileButton?.addEventListener("click", () => {
-    hideModal(howToModal);
-    showModal(selectFileModal);
-  });
+  startButton?.addEventListener("click", () => showModal(uploadModal));
 
   // Drag & Drop
-  uploadArea?.addEventListener("click", () => zipFileInput?.click());
-  zipFileInput?.addEventListener("change", (e) =>
-    handleFile(e.target.files[0])
-  );
+  zipFileInput?.addEventListener("click", (e) => {
+    // Останавливаем всплытие, чтобы клик по инпуту не триггерил клик по uploadArea снова
+    e.stopPropagation();
+  });
+
+  zipFileInput?.addEventListener("change", function (e) {
+    if (this.files && this.files[0]) {
+      handleFile(this.files[0]);
+    }
+    this.value = "";
+  });
   uploadArea?.addEventListener("dragover", (e) => {
     e.preventDefault();
     uploadArea.classList.add("dragover");
@@ -740,7 +728,9 @@ document.addEventListener("DOMContentLoaded", () => {
   uploadArea?.addEventListener("drop", (e) => {
     e.preventDefault();
     uploadArea.classList.remove("dragover");
-    handleFile(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files.length > 0) {
+      handleFile(e.dataTransfer.files[0]);
+    }
   });
 
   closeSlideshowButton?.addEventListener("click", endFullscreenSlideshow);
@@ -789,8 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Закрытие модалок по клику на фон
   window.onclick = (e) => {
-    if (e.target === howToModal) hideModal(howToModal);
-    if (e.target === selectFileModal) hideModal(selectFileModal);
+    if (e.target === uploadModal) hideModal(uploadModal);
   };
 
   // Демо режим

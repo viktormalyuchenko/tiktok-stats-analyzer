@@ -219,52 +219,45 @@ const TikTokAnalyzer = {
     let totalCount = 0;
     let matchedCount = 0;
 
-    // Словарь для подсчета авторов: { "@username": 5, ... }
-    const creators = {};
+    // Объявляем переменные для дат
+    let firstLike = null;
+    let lastLike = null;
 
+    // Запускаем цикл
     list.forEach((item) => {
       const d = this.parseDateString(item.date);
+
+      // Если дата валидна и год совпадает
       if (d && d.getUTCFullYear() === year) {
         totalCount++;
 
-        // Проверка периода для Ratio
+        // Ищем первый и последний лайк
+        if (!firstLike || d < firstLike) firstLike = d;
+        if (!lastLike || d > lastLike) lastLike = d;
+
+        // Считаем лайки внутри периода просмотров (для процента щедрости)
         if (dateLimit.start && dateLimit.end) {
-          if (d >= dateLimit.start && d <= dateLimit.end) matchedCount++;
+          if (d >= dateLimit.start && d <= dateLimit.end) {
+            matchedCount++;
+          }
         } else {
           matchedCount++;
-        }
-
-        // --- ПАРСИНГ АВТОРА ---
-        // Ссылка вида: https://www.tiktok.com/@username/video/123...
-        if (item.link) {
-          // Ищем всё между "@" и "/"
-          const match = item.link.match(/@([^\/]+)/);
-          if (match && match[1]) {
-            const author = match[1];
-            creators[author] = (creators[author] || 0) + 1;
-          }
         }
       }
     });
 
-    // Сортируем авторов
-    const sortedCreators = Object.entries(creators)
-      .sort((a, b) => b[1] - a[1]) // По убыванию
-      .slice(0, 3) // Топ-3
-      .map((entry) => ({ name: entry[0], count: entry[1] }));
-
     return {
       tableData: {
-        "Лайков за год": totalCount.toLocaleString(),
-        "Любимый автор":
-          sortedCreators.length > 0
-            ? `@${sortedCreators[0].name} (${sortedCreators[0].count} лайков)`
-            : "-",
+        "Лайков за год (Всего)": totalCount.toLocaleString(),
+        "Лайков в период просмотра": dateLimit.start
+          ? `${matchedCount.toLocaleString()} (для %)`
+          : "-",
+        "Первый лайк": firstLike ? this.formatDate(firstLike, "UTC") : "-",
+        "Последний лайк": lastLike ? this.formatDate(lastLike, "UTC") : "-",
       },
       slideInfo: {
         likeCount: totalCount,
         matchedLikeCount: matchedCount,
-        topCreators: sortedCreators, // <--- Передаем топ авторов
       },
     };
   },
@@ -280,7 +273,9 @@ const TikTokAnalyzer = {
       if (d && d.getUTCFullYear() === year) {
         count++;
         const txt = c.comment || "";
-        totalChars += txt.length;
+
+        totalChars += [...txt].length;
+
         const emojiRegex =
           /([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}])/gu;
         const matches = txt.match(emojiRegex);
