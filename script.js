@@ -657,21 +657,41 @@ async function generateAndShareImage() {
 
   updateStatus("Рисуем карточку...", "loading");
 
-  // Заполнение данными (Новые селекторы)
+  // Заполнение данными
   if (currentAnalysisResult) {
     const stats = currentAnalysisResult;
     const fill = (sel, txt) => {
       const el = shareCard.querySelector(sel);
       if (el) el.innerHTML = txt;
-    }; // Используем innerHTML для переносов строк
+    };
 
     fill(".share-year", "2025");
     fill(".share-username", stats.profile?.slideInfo?.userName);
 
-    // Персона
+    // --- ПЕРСОНА И АДАПТИВНЫЙ ШРИФТ ---
     const pData = getPersonaDetails(stats);
-    fill(".share-persona", pData.title);
+    const personaTitle = pData.title;
+
+    fill(".share-persona", personaTitle);
     fill(".share-desc", pData.desc);
+
+    // Логика уменьшения шрифта
+    const personaEl = shareCard.querySelector(".share-persona");
+    if (personaEl) {
+      const len = personaTitle.length;
+
+      // Сброс на размер по умолчанию (для коротких слов типа "Саппорт")
+      personaEl.style.fontSize = "7.5rem";
+
+      if (len > 15) {
+        // Длинные: "Повелитель ленты" (16), "Дистрибьютор..." (18)
+        personaEl.style.fontSize = "4.2rem";
+      } else if (len > 9) {
+        // Средние: "Исследователь" (13), "На расслабоне" (13)
+        personaEl.style.fontSize = "5.5rem";
+      }
+    }
+    // ----------------------------------
 
     // Статистика
     fill(
@@ -687,11 +707,10 @@ async function generateAndShareImage() {
   }
 
   try {
-    // Рендер (масштаб 1, так как размеры заданы в пикселях 1080x1920)
     const canvas = await html2canvas(shareCard, {
       backgroundColor: "#050505",
       scale: 1,
-      useCORS: true, // Важно для шрифтов
+      useCORS: true,
     });
 
     canvas.toBlob((blob) => {
@@ -699,7 +718,6 @@ async function generateAndShareImage() {
         type: "image/png",
       });
 
-      // Пытаемся использовать нативный шеринг (работает на мобилках)
       if (navigator.share && navigator.canShare({ files: [file] })) {
         navigator
           .share({
@@ -709,7 +727,6 @@ async function generateAndShareImage() {
           })
           .catch(console.error);
       } else {
-        // Скачивание на ПК
         const link = document.createElement("a");
         link.download = "tiktok-wrapped.png";
         link.href = canvas.toDataURL();
