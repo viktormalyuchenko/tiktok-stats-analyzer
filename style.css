@@ -277,6 +277,7 @@ h1 {
   justify-content: space-between;
   gap: 30px;
   margin-top: 40px;
+  margin-bottom: 40px;
   flex-wrap: wrap;
 }
 .step-card {
@@ -298,6 +299,11 @@ h1 {
 }
 
 /* FAQ */
+.faq h2 {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
 .faq-item {
   background: var(--bg-element);
   border-radius: 12px;
@@ -1067,6 +1073,15 @@ h1 {
   display: block; /* Больше не нужен flex space-between */
   padding-right: 40px; /* Безопасная зона для иконки */
   width: 100%;
+}
+
+footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: 30px;
+  margin-top: 100px; /* Добавили большой отступ сверху */
+  color: var(--text-muted);
+  text-align: center;
+  padding-bottom: 40px; /* Чтобы на мобилках было место снизу */
 }
 
 /* На мобильных зона загрузки чуть компактнее */
