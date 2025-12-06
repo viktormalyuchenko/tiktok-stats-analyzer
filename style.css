@@ -62,7 +62,7 @@ body {
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  padding: 40px 15px;
+  padding: 20px 5px;
   forced-color-adjust: none;
 }
 
@@ -515,7 +515,7 @@ h1 {
   background: rgba(255, 255, 255, 0.08);
   padding: 15px;
   border-radius: 16px;
-  margin-top: auto;
+  margin-top: 10px;
 }
 .superpower-value {
   font-size: 1.4rem;
@@ -1044,6 +1044,29 @@ h1 {
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.6;
+}
+.card-persona,
+.card-hero {
+  position: relative;
+}
+
+/* Общий стиль для иконок */
+.persona-icon,
+.hero-icon {
+  position: absolute; /* Вырываем из потока */
+  top: 25px; /* Отступ сверху (как у padding карточки) */
+  right: 25px; /* Отступ справа */
+  font-size: 2rem;
+  line-height: 1;
+  margin: 0; /* Убираем старые отступы */
+  opacity: 1; /* Убеждаемся, что их видно */
+}
+
+/* Корректируем заголовок, чтобы он не наезжал на иконку (если текст будет длинным) */
+.card-header-row {
+  display: block; /* Больше не нужен flex space-between */
+  padding-right: 40px; /* Безопасная зона для иконки */
+  width: 100%;
 }
 
 /* На мобильных зона загрузки чуть компактнее */

@@ -454,6 +454,7 @@
                   src=""
                   alt="Avatar"
                   style="display: none"
+                  referrerpolicy="no-referrer"
                 />
                 <span id="resAvatarInitials">U</span>
 
@@ -653,260 +654,259 @@
       </section>
     </div>
 
-    <!-- Скрытый контейнер для генерации картинки (1080x1920) -->
+    <!-- Скрытый контейнер для генерации (Дизайн: Transparent Vibe) -->
     <div
       id="shareCardContainer"
-      aria-hidden="true"
-      style="
-        position: absolute;
-        left: -9999px;
-        top: -9999px;
-        background: #1a1a1a;
-      "
+      style="position: absolute; left: -9999px; top: 0"
     >
-      <!-- Карточка 9:16 (1080x1920) -->
       <div
         id="shareCard"
         style="
           width: 1080px;
           height: 1920px;
-          background-color: #1a1a1a;
-          color: #e8e8e8;
-          padding: 90px 60px;
+          background: #050505;
           font-family: 'Inter', sans-serif;
-          display: flex;
-          flex-direction: column; /* justify-content: space-between; УБИРАЕМ */
           position: relative;
           overflow: hidden;
+          color: white;
+          display: flex;
+          flex-direction: column;
         "
       >
-        <!-- Фоновый SVG узор -->
-        <svg
-          width="100%"
-          height="100%"
-          style="position: absolute; top: 0; left: 0; z-index: 0; opacity: 0.05"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 100 100"
-        >
-          <defs>
-            <pattern
-              id="wavePattern"
-              patternUnits="userSpaceOnUse"
-              width="150"
-              height="150"
-              patternTransform="rotate(20)"
-            >
-              <path
-                d="M 0 75 Q 37.5 25, 75 75 T 150 75"
-                stroke="#f0f0f0"
-                stroke-width="1.5"
-                fill="none"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#wavePattern)" />
-        </svg>
-
-        <!-- Основной контент -->
+        <!-- Фон (Пятна) -->
         <div
           style="
-            position: relative;
-            z-index: 1;
+            position: absolute;
+            top: -300px;
+            left: -300px;
+            width: 1200px;
+            height: 1200px;
+            background: radial-gradient(
+              circle,
+              rgba(110, 207, 203, 0.15) 0%,
+              transparent 70%
+            );
+          "
+        ></div>
+        <div
+          style="
+            position: absolute;
+            bottom: -300px;
+            right: -300px;
+            width: 1200px;
+            height: 1200px;
+            background: radial-gradient(
+              circle,
+              rgba(237, 29, 81, 0.15) 0%,
+              transparent 70%
+            );
+          "
+        ></div>
+
+        <!-- Контент -->
+        <div
+          style="
+            padding: 80px 60px;
             height: 100%;
             display: flex;
-            flex-direction: column; /* Оставляем column */
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
           "
         >
-          <!-- Верхний блок: Заголовок (без justify-content: space-between; он теперь не нужен для родителя) -->
-          <div
-            class="share-title"
-            style="
-              text-align: center;
-              margin-bottom: 60px;
-              padding-top: 30px;
-              flex-shrink: 0; /* Не сжимать */
-            "
-          >
-            <span
+          <!-- Шапка -->
+          <div style="text-align: center">
+            <div
               class="share-username"
               style="
-                font-size: 3.8rem;
+                font-size: 2.2rem;
                 font-weight: 600;
-                color: #f0f0f0;
-                display: block;
-                margin-bottom: 15px;
+                color: #888;
+                margin-bottom: 20px;
               "
-              >@username</span
             >
+              @username
+            </div>
             <div
               style="
-                height: 18px;
-                width: 70%;
-                margin: 0 auto 25px auto;
-                background: linear-gradient(
-                  90deg,
-                  #f95f62,
-                  #ff0050,
-                  #a600f4,
-                  #00f2ea
-                );
-                border-radius: 9px;
+                font-size: 3rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                color: white;
               "
-            ></div>
-            <span
+            >
+              Моя статистика
+            </div>
+            <div
               class="share-year"
               style="
-                font-size: 3.8rem;
-                font-weight: 700;
-                color: #f0f0f0;
-                display: block;
-              "
-              >ГОД</span
-            >
-          </div>
-
-          <!-- НОВАЯ ОБЕРТКА для Центрирования Статистики -->
-          <div
-            class="stats-wrapper"
-            style="
-              flex-grow: 1; /* Занять все доступное пространство */
-              display: flex;
-              align-items: center; /* Вертикальное центрирование */
-              justify-content: center; /* Горизонтальное центрирование (для грида не так важно, но пусть будет) */
-              padding: 20px 0; /* Небольшие вертикальные отступы */
-            "
-          >
-            <!-- Средний блок: Статистика -->
-            <div
-              class="share-stats-grid"
-              style="
-                display: grid;
-                grid-template-columns: auto 1fr;
-                gap: 25px 30px;
-                align-items: center;
-                font-size: 1.8rem;
-                width: 90%; /* Ограничим ширину грида */
-                max-width: 700px; /* Максимальная ширина */
-                margin: 0 auto; /* Центрируем сам грид */
+                font-size: 7rem;
+                font-weight: 900;
+                line-height: 1;
+                color: #fff;
               "
             >
-              <!-- Persona -->
-              <span
-                class="share-label"
-                style="font-weight: 500; color: #a0a0a0; text-align: left"
-                >Тип профиля</span
-              >
-              <span
-                class="share-value share-persona"
-                style="
-                  font-weight: 600;
-                  color: #ffffff;
-                  text-align: right;
-                  font-size: 1.8rem;
-                "
-                >-</span
-              >
-              <!-- Videos Watched -->
-              <span
-                class="share-label"
-                style="font-weight: 500; color: #a0a0a0; text-align: left"
-                >Всего видео</span
-              >
-              <span
-                class="share-value share-videos-watched"
-                style="font-weight: 600; color: #ffffff; text-align: right"
-                >0</span
-              >
-              <!-- Watch Time -->
-              <span
-                class="share-label"
-                style="font-weight: 500; color: #a0a0a0; text-align: left"
-                >Время просмотра</span
-              >
-              <span
-                class="share-value share-watch-time"
-                style="font-weight: 600; color: #ffffff; text-align: right"
-                >~ 0 ч</span
-              >
-              <!-- Sessions -->
-              <span
-                class="share-label"
-                style="font-weight: 500; color: #a0a0a0; text-align: left"
-                >Сессий</span
-              >
-              <span
-                class="share-value share-sessions"
-                style="font-weight: 600; color: #ffffff; text-align: right"
-                >0</span
-              >
-              <!-- Avg Session -->
-              <span
-                class="share-label"
-                style="font-weight: 500; color: #a0a0a0; text-align: left"
-                >Средняя сессия</span
-              >
-              <span
-                class="share-value share-avg-session"
-                style="font-weight: 600; color: #ffffff; text-align: right"
-                >0 мин</span
-              >
-              <!-- Comments -->
-              <span
-                class="share-label"
-                style="font-weight: 500; color: #a0a0a0; text-align: left"
-                >Комментариев</span
-              >
-              <span
-                class="share-value share-comments"
-                style="font-weight: 600; color: #ffffff; text-align: right"
-                >0</span
-              >
-              <!-- Likes -->
-              <span
-                class="share-label"
-                style="font-weight: 500; color: #a0a0a0; text-align: left"
-                >Лайков</span
-              >
-              <span
-                class="share-value share-likes"
-                style="font-weight: 600; color: #ffffff; text-align: right"
-                >0</span
-              >
-              <!-- Emoji -->
-              <span
-                class="share-label"
-                style="font-weight: 500; color: #a0a0a0; text-align: left"
-                >Любимый эмодзи</span
-              >
-              <span
-                class="share-value share-emoji"
-                style="
-                  font-weight: 600;
-                  color: #ffffff;
-                  text-align: right;
-                  font-size: 2.5rem;
-                "
-                >-</span
-              >
+              2024
             </div>
           </div>
 
-          <!-- Нижний блок: Футер (без justify-content: space-between; он теперь не нужен для родителя) -->
-          <div
-            class="share-footer"
-            style="
-              text-align: center;
-              padding-bottom: 20px;
-              padding-top: 40px;
-              flex-shrink: 0; /* Не сжимать */
-            "
-          >
-            <p style="font-size: 1.3rem; color: #888888; margin-bottom: 5px">
-              Получи свою статистику на:
-            </p>
-            <p style="font-size: 1.4rem; color: #b0b0b0; font-weight: 500">
-              tiktok.viktoor.ru
-            </p>
+          <!-- ВАЙБ (Без фона, просто текст) -->
+          <div style="text-align: center; margin: 40px 0">
+            <div
+              style="
+                font-size: 2.2rem;
+                text-transform: uppercase;
+                color: #666;
+                letter-spacing: 4px;
+                margin-bottom: 30px;
+              "
+            >
+              Мой TikTok Вайб
+            </div>
+
+            <div
+              class="share-persona"
+              style="
+                font-size: 8rem;
+                font-weight: 900;
+                line-height: 1;
+                margin-bottom: 30px;
+                color: #ffffff;
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+              "
+            >
+              Повелитель
+            </div>
+
+            <div
+              class="share-desc"
+              style="
+                font-size: 2.2rem;
+                color: #aaa;
+                line-height: 1.4;
+                max-width: 900px;
+                margin: 0 auto;
+              "
+            >
+              Ты прошел TikTok до конца.
+            </div>
+          </div>
+
+          <!-- СЕТКА СТАТИСТИКИ (Цветные цифры) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px">
+            <!-- Часы (Розовый) -->
+            <div
+              style="
+                background: #111;
+                border-radius: 40px;
+                padding: 40px;
+                text-align: center;
+              "
+            >
+              <div style="font-size: 1.8rem; color: #666; margin-bottom: 10px">
+                Времени
+              </div>
+              <div
+                class="share-time"
+                style="font-size: 4.5rem; font-weight: 800; color: #ff0050"
+              >
+                753 ч
+              </div>
+            </div>
+
+            <!-- Лайки (Циан) -->
+            <div
+              style="
+                background: #111;
+                border-radius: 40px;
+                padding: 40px;
+                text-align: center;
+              "
+            >
+              <div style="font-size: 1.8rem; color: #666; margin-bottom: 10px">
+                Лайков
+              </div>
+              <div
+                class="share-likes"
+                style="font-size: 4.5rem; font-weight: 800; color: #23d5ab"
+              >
+                12K
+              </div>
+            </div>
+
+            <!-- Заходы (Желтый) -->
+            <div
+              style="
+                background: #111;
+                border-radius: 40px;
+                padding: 40px;
+                text-align: center;
+              "
+            >
+              <div style="font-size: 1.8rem; color: #666; margin-bottom: 10px">
+                Заходов
+              </div>
+              <div
+                class="share-sessions"
+                style="font-size: 4.5rem; font-weight: 800; color: #f4d03f"
+              >
+                4,200
+              </div>
+            </div>
+
+            <!-- Видео (Фиолетовый) -->
+            <div
+              style="
+                background: #111;
+                border-radius: 40px;
+                padding: 40px;
+                text-align: center;
+              "
+            >
+              <div style="font-size: 1.8rem; color: #666; margin-bottom: 10px">
+                Видео
+              </div>
+              <div
+                class="share-videos-watched"
+                style="font-size: 4.5rem; font-weight: 800; color: #a600f4"
+              >
+                15K
+              </div>
+            </div>
+          </div>
+
+          <!-- Футер -->
+          <div style="text-align: center; margin-top: 40px">
+            <div
+              style="
+                font-size: 1.8rem;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                color: #666;
+                margin-bottom: 20px;
+                font-weight: 600;
+              "
+            >
+              Больше статистики на
+            </div>
+            <!-- Кнопка (Сплошной черный фон) -->
+            <div
+              style="
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #fff;
+                background: #000;
+                border: 3px solid #222;
+                display: inline-block;
+                padding: 20px 60px;
+                border-radius: 100px;
+              "
+            >
+              <span style="color: #fff">tiktok.</span
+              ><span style="color: #23d5ab">viktoor.ru</span>
+            </div>
           </div>
         </div>
       </div>
@@ -925,7 +925,7 @@
           <input
             type="file"
             id="zipFileInput"
-            accept=".zip,.json,application/zip,application/json,application/x-zip-compressed,application/octet-stream"
+            accept=".zip,application/zip, .json,application/json"
             style="display: none"
           />
         </label>

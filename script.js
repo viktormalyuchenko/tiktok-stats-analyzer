@@ -482,12 +482,12 @@ function getPersonaDetails(stats) {
     };
   }
 
-  // 6. ИССЛЕДОВАТЕЛЬ (Стандартный юзер)
+  // 6. На расслабоне (Стандартный юзер)
   return {
-    title: "Исследователь",
-    icon: "🧭",
-    desc: "Ты используешь TikTok так, как задумано: для отдыха и вдохновения.",
-    statLabel: "Просмотрено",
+    title: "На расслабоне",
+    icon: "🍹", // Или 🧘‍♂️ или 🕶️
+    desc: "ТикТок не управляет тобой, это ты управляешь им. Зашел, посмеялся, вышел. Идеальный баланс.",
+    statLabel: "Всего просмотрено",
     statValue: `${nFmt(views)} видео`,
   };
 }
@@ -655,39 +655,63 @@ async function generateAndShareImage() {
     );
   }
 
-  updateStatus("Генерация картинки...", "loading");
+  updateStatus("Рисуем карточку...", "loading");
 
-  // Заполняем скрытую карточку данными перед снимком
+  // Заполнение данными (Новые селекторы)
   if (currentAnalysisResult) {
     const stats = currentAnalysisResult;
-    // Здесь можно точечно обновить ID внутри shareCard, если они есть в HTML
     const fill = (sel, txt) => {
       const el = shareCard.querySelector(sel);
-      if (el) el.textContent = txt;
-    };
+      if (el) el.innerHTML = txt;
+    }; // Используем innerHTML для переносов строк
 
+    fill(".share-year", "2025");
     fill(".share-username", stats.profile?.slideInfo?.userName);
-    fill(".share-year", yearSelect.value);
-    fill(".share-persona", TikTokAnalyzer.getPersona(stats));
+
+    // Персона
+    const pData = getPersonaDetails(stats);
+    fill(".share-persona", pData.title);
+    fill(".share-desc", pData.desc);
+
+    // Статистика
+    fill(
+      ".share-time",
+      (stats.watchHistory?.slideInfo?.totalWatchTimeHours || 0) + " ч"
+    );
+    fill(".share-likes", nFmt(stats.likes?.slideInfo?.likeCount));
+    fill(".share-sessions", nFmt(stats.watchHistory?.slideInfo?.watchSessions));
     fill(
       ".share-videos-watched",
-      stats.watchHistory?.slideInfo?.videoCount?.toLocaleString()
+      nFmt(stats.watchHistory?.slideInfo?.videoCount)
     );
-    // ... остальные поля
   }
 
   try {
+    // Рендер (масштаб 1, так как размеры заданы в пикселях 1080x1920)
     const canvas = await html2canvas(shareCard, {
-      backgroundColor: "#121212",
-      scale: 2,
+      backgroundColor: "#050505",
+      scale: 1,
+      useCORS: true, // Важно для шрифтов
     });
+
     canvas.toBlob((blob) => {
-      const file = new File([blob], "tiktok-stats.png", { type: "image/png" });
+      const file = new File([blob], "tiktok-wrapped.png", {
+        type: "image/png",
+      });
+
+      // Пытаемся использовать нативный шеринг (работает на мобилках)
       if (navigator.share && navigator.canShare({ files: [file] })) {
-        navigator.share({ files: [file], title: "My TikTok Stats" });
+        navigator
+          .share({
+            files: [file],
+            title: "Мой TikTok Wrapped",
+            text: "Смотри, сколько времени я потратил! 👉 tiktok.viktoor.ru",
+          })
+          .catch(console.error);
       } else {
+        // Скачивание на ПК
         const link = document.createElement("a");
-        link.download = "tiktok-stats.png";
+        link.download = "tiktok-wrapped.png";
         link.href = canvas.toDataURL();
         link.click();
       }
@@ -695,7 +719,8 @@ async function generateAndShareImage() {
       setTimeout(() => updateStatus(""), 2000);
     });
   } catch (e) {
-    updateStatus("Ошибка генерации: " + e.message, "error");
+    console.error(e);
+    updateStatus("Ошибка: " + e.message, "error");
   }
 }
 
