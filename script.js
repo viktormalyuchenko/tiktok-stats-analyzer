@@ -243,16 +243,18 @@ function prepareSlidesAndTable(stats, year) {
   const avatarUrl = stats.profile?.slideInfo?.avatarUrl;
   initEl.textContent = userName.replace("@", "").charAt(0) || "U";
   if (avatarUrl) {
+    imgEl.referrerPolicy = "no-referrer";
+
     imgEl.src = avatarUrl;
     imgEl.style.display = "block";
     initEl.style.display = "none";
     imgEl.onerror = () => {
       imgEl.style.display = "none";
-      initEl.style.display = "block";
+      initEl.style.display = "flex";
     };
   } else {
     imgEl.style.display = "none";
-    initEl.style.display = "block";
+    initEl.style.display = "flex";
   }
 
   // 1. PERSONA
