@@ -8,6 +8,8 @@ const zipFileInput = document.getElementById("zipFileInput");
 const uploadText = document.getElementById("uploadText");
 const uploadStatus = document.getElementById("uploadStatus");
 
+const downloadSlidesButton = document.getElementById("downloadSlidesButton");
+
 const mainContent = document.getElementById("mainContent");
 const fullscreenSlideshow = document.getElementById("fullscreenSlideshow");
 const fsSlidesContainer = fullscreenSlideshow?.querySelector(
@@ -54,6 +56,8 @@ function hideModal(el) {
 
 function resetToInitialState() {
   currentAnalysisResult = null;
+  generatedBlobs = [];
+  cachedSlidesBlobs = null;
   fsSlidesData = [];
   if (fullscreenSlideshow) {
     fullscreenSlideshow.classList.remove("visible");
@@ -122,6 +126,7 @@ function processZipContent(file) {
 
 // --- Обработка JSON и Анализ (СВЯЗЬ С ANALYZER.JS) ---
 function processJsonText(jsonText) {
+  cachedSlidesBlobs = null;
   try {
     updateStatus("Анализ данных...", "loading");
     const rawData = JSON.parse(jsonText);
@@ -741,17 +746,35 @@ async function generateAndShareImage() {
   }
 }
 
-document
-  .getElementById("downloadSlidesButton")
-  ?.addEventListener("click", generateCarousel);
-
 let generatedBlobs = [];
+let cachedSlidesBlobs = null;
 
 async function generateCarousel() {
+  if (cachedSlidesBlobs && cachedSlidesBlobs.length > 0) {
+    showSlidesModal(cachedSlidesBlobs);
+    return;
+  }
+
+  // Подгрузка библиотек
   if (typeof html2canvas === "undefined")
     await import(
       "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
     );
+  if (typeof JSZip === "undefined")
+    await import(
+      "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+    );
+
+  // 2. ПОКАЗЫВАЕМ ОВЕРЛЕЙ ЗАГРУЗКИ
+  const btn = document.getElementById("downloadSlidesButton");
+  const btnText = document.getElementById("slidesBtnText");
+  const originalText = btnText ? btnText.textContent : "Слайды TikTok";
+
+  // ВКЛЮЧАЕМ РЕЖИМ ЗАГРУЗКИ
+  if (btn) {
+    btn.classList.add("btn-progress");
+    btn.style.setProperty("--progress", "0%");
+  }
 
   updateStatus("Генерируем слайды...", "loading");
   if (!currentAnalysisResult) return;
@@ -797,29 +820,51 @@ async function generateCarousel() {
   document.getElementById("sLikeComment").textContent = phrases.likePhrase;
 
   // --- 2. РЕНДЕР ---
-  const slideIds = ["slide1", "slide2", "slide3", "slide4", "slide5", "slide6"];
   generatedBlobs = [];
+  const slideIds = ["slide1", "slide2", "slide3", "slide4", "slide5", "slide6"];
+  const total = slideIds.length;
 
   try {
-    for (let i = 0; i < slideIds.length; i++) {
-      updateStatus(`Рисуем слайд ${i + 1}/6...`, "loading");
-      const el = document.getElementById(slideIds[i]);
+    for (let i = 0; i < total; i++) {
+      // ОБНОВЛЯЕМ КНОПКУ
+      const percent = Math.round((i / total) * 100);
+      if (btn) {
+        btn.style.setProperty("--progress", `${percent}%`);
+        if (btnText) btnText.textContent = `Создаем ${i + 1}/${total}`;
+      }
 
+      // Пауза для UI
+      await new Promise((r) => setTimeout(r, 20));
+
+      const el = document.getElementById(slideIds[i]);
       const canvas = await html2canvas(el, {
         backgroundColor: "#050505",
         scale: 1,
       });
       const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
-
-      generatedBlobs.push({ name: `tiktok-slide-${i + 1}.png`, blob: blob });
+      generatedBlobs.push({ name: `slide-${i + 1}.png`, blob: blob });
     }
 
-    updateStatus("Готово!", "success");
-    setTimeout(() => updateStatus(""), 1000);
+    // ФИНИШ
+    if (btn) {
+      btn.style.setProperty("--progress", "100%");
+      if (btnText) btnText.textContent = "Готово!";
+    }
+
+    cachedSlidesBlobs = [...generatedBlobs];
+    await new Promise((r) => setTimeout(r, 500));
+
     showSlidesModal(generatedBlobs);
   } catch (e) {
     console.error(e);
-    updateStatus("Ошибка: " + e.message, "error");
+    alert("Ошибка: " + e.message);
+  } finally {
+    // СБРОС КНОПКИ (Всегда)
+    if (btn) {
+      btn.classList.remove("btn-progress");
+      btn.style.removeProperty("--progress");
+      if (btnText) btnText.textContent = originalText;
+    }
   }
 }
 
@@ -870,7 +915,15 @@ function showSlidesModal(blobs) {
   // Открываем модалку
   const modal = document.getElementById("slidesModal");
   if (modal) {
+    modal.style.opacity = "0";
     modal.style.display = "flex";
+
+    // 2. МАГИЯ: Заставляем браузер "проснуться" и пересчитать размеры
+    // Это триггерит reflow, чтобы анимация сработала
+    void modal.offsetWidth;
+
+    // 3. Теперь плавно показываем
+    modal.style.opacity = "1";
 
     // Кнопка ZIP
     const zipBtn = document.getElementById("downloadZipBtn");
@@ -878,6 +931,16 @@ function showSlidesModal(blobs) {
       const newBtn = zipBtn.cloneNode(true);
       zipBtn.parentNode.replaceChild(newBtn, zipBtn);
       newBtn.addEventListener("click", () => downloadAsZip(blobs));
+    }
+
+    const closeBtn = document.getElementById("closeSlidesModalBtn");
+    if (closeBtn) {
+      const newClose = closeBtn.cloneNode(true);
+      closeBtn.parentNode.replaceChild(newClose, closeBtn);
+      newClose.addEventListener("click", () => {
+        modal.style.opacity = "0";
+        setTimeout(() => (modal.style.display = "none"), 300);
+      });
     }
   }
 }
@@ -906,6 +969,8 @@ function reachMetrikaGoal(goal) {
 document.addEventListener("DOMContentLoaded", () => {
   // Event Listeners
   startButton?.addEventListener("click", () => showModal(uploadModal));
+
+  downloadSlidesButton?.addEventListener("click", generateCarousel);
 
   // Drag & Drop
   zipFileInput?.addEventListener("click", (e) => {

@@ -922,11 +922,20 @@ h1 {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s;
+  overflow: hidden; /* Важно: чтобы не было скролла */
 }
+
 #fullscreenSlideshow.visible {
   opacity: 1;
   pointer-events: auto;
 }
+
+.fs-slides-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
 .fs-slide {
   position: absolute;
   top: 0;
@@ -938,80 +947,126 @@ h1 {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 20px;
+  padding: 20px; /* Безопасные отступы */
   opacity: 0;
   transform: scale(0.95);
   transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .fs-slide.active {
   opacity: 1;
   transform: scale(1);
   z-index: 10;
 }
+
+/* АДАПТИВНАЯ ТИПОГРАФИКА (clamp) */
+
+/* Заголовок (сверху) */
 .fs-title {
-  font-size: 1.5rem;
+  font-size: clamp(1.2rem, 3vh, 2rem); /* Масштабируется от высоты */
   text-transform: uppercase;
   letter-spacing: 2px;
   color: var(--text-secondary);
-  margin-bottom: 20px;
+  margin-bottom: 2vh;
 }
+
+/* Огромная цифра */
 .fs-value {
-  font-size: 6rem;
+  font-size: clamp(
+    3.5rem,
+    12vw,
+    7rem
+  ); /* Чуть уменьшил минимум, чтобы влезало */
   font-weight: 900;
   line-height: 1.1;
-  margin-bottom: 20px;
+  margin-bottom: 2vh;
+
   background: var(--header-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+  /* ИСПРАВЛЕНИЕ ПЕРЕНОСОВ */
+  word-break: normal; /* Не рвать слова посередине */
+  overflow-wrap: break-word; /* Переносить только если слово шире экрана (редко) */
+  text-align: center;
+
+  max-width: 95vw;
 }
+
+/* Подпись */
 .fs-label {
-  font-size: 1.8rem;
+  font-size: clamp(1.2rem, 4vw, 2.5rem);
   color: var(--text-primary);
   font-weight: 500;
-  margin-bottom: 30px;
+  margin-bottom: 4vh;
 }
+
+/* Детали (Текст снизу) */
 .fs-details {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 3.5vw, 1.5rem);
   color: var(--text-secondary);
-  max-width: 600px;
+  max-width: 800px;
+  width: 90%; /* Чтобы не прилипало к краям на телефоне */
   background: rgba(255, 255, 255, 0.05);
-  padding: 15px 25px;
+  padding: 20px;
   border-radius: 20px;
   backdrop-filter: blur(5px);
+  line-height: 1.5;
 }
+
+/* Кнопка закрытия */
 .close-fs-button {
   position: absolute;
-  top: 30px;
-  right: 30px;
+  top: 20px;
+  right: 20px;
+
+  /* Жесткие размеры */
   width: 50px;
   height: 50px;
+  min-width: 50px; /* Чтобы не сплющивалась */
+  min-height: 50px;
+  padding: 0; /* Убираем внутренние отступы */
+
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   border: none;
   color: white;
   font-size: 1.5rem;
+
   cursor: pointer;
   z-index: 10000;
+
+  /* Центрируем крестик */
   display: flex;
   justify-content: center;
   align-items: center;
+
+  margin-top: env(safe-area-inset-top);
+  transition: background 0.3s;
 }
+
+.close-fs-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Прогресс бар */
 .fs-progress-bar-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 6px;
+  height: 4px;
   background: rgba(255, 255, 255, 0.1);
   z-index: 10000;
+  /* Учитываем "челку" - сдвигаем ниже, если надо, или оставляем сверху */
+  top: env(safe-area-inset-top);
 }
 .fs-progress-bar {
   height: 100%;
   background: var(--primary-gradient);
   width: 0%;
-  border-radius: 0 4px 4px 0;
 }
 /* Спойлер с инструкцией */
 .instruction-spoiler {
@@ -1275,15 +1330,23 @@ footer {
 /* Футер (Ссылка снизу) */
 .slide-footer {
   position: absolute;
-  bottom: 60px;
+  bottom: 80px;
   width: 100%;
-  text-align: center;
-  font-size: 2.5rem;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+}
+
+.s-footer-pill {
+  background: #000;
+  border: 2px solid #222;
+  padding: 15px 50px;
+  border-radius: 100px;
+  font-size: 2rem;
   font-weight: 700;
-  color: #444;
-  z-index: 5;
-  text-transform: uppercase;
-  letter-spacing: 3px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  letter-spacing: 1px;
 }
 
 .slide-content {
@@ -1622,4 +1685,34 @@ footer {
     flex-direction: column;
     gap: 30px;
   }
+}
+
+/* --- КНОПКА С ПРОГРЕССОМ --- */
+.btn-progress {
+  position: relative;
+  overflow: hidden; /* Чтобы бар не вылезал */
+  pointer-events: none; /* Блокируем повторные клики */
+  color: white !important; /* Текст всегда белый */
+  border-color: transparent !important;
+}
+
+/* Сам прогресс-бар (фон) */
+.btn-progress::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--progress, 0%); /* Управляется через JS переменную */
+  background: var(--primary-gradient);
+  z-index: 0;
+  transition: width 0.2s ease;
+  opacity: 0.5; /* Полупрозрачный, чтобы текст читался */
+}
+
+/* Текст кнопки поднимаем наверх */
+.btn-progress span,
+.btn-progress i {
+  position: relative;
+  z-index: 1;
 }

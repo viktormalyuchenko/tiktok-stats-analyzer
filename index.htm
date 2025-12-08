@@ -143,68 +143,67 @@
     </noscript>
     <!-- /Yandex.Metrika counter -->
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "SoftwareApplication",
-      "name": "TikTok Stats: Итоги года и Анализ времени",
-      "description": "Бесплатный инструмент для просмотра статистики TikTok. Узнай, сколько времени ты просидел в приложении, посмотри историю просмотров и лайков из файла JSON. Работает локально в браузере.",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "Any",
-      "url": "https://tiktok.viktoor.ru/",
-      "screenshot": "https://viktormalyuchenko.github.io/tiktok-stats-analyzer/images/og-image.png",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "RUB"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Viktor Malyuchenko",
-        "url": "https://viktormalyuchenko.github.io"
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "name": "TikTok Stats: Итоги года и Анализ времени",
+            "description": "Бесплатный инструмент для просмотра статистики TikTok. Узнай, сколько времени ты просидел в приложении, посмотри историю просмотров и лайков из файла JSON. Работает локально в браузере.",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "Any",
+            "url": "https://tiktok.viktoor.ru/",
+            "screenshot": "https://viktormalyuchenko.github.io/tiktok-stats-analyzer/images/og-image.png",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "RUB"
+            },
+            "author": {
+              "@type": "Person",
+              "name": "Viktor Malyuchenko",
+              "url": "https://viktormalyuchenko.github.io"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "Как узнать, сколько времени я просидел в Тик Токе?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Скачайте файл данных (JSON) в настройках TikTok и загрузите его в наш анализатор. Мы суммируем длительность всех просмотров и покажем точное количество часов за год и среднее время в день."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Как открыть файл JSON или ZIP из TikTok?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Вам не нужны специальные программы. Просто перетащите скачанный ZIP-архив или файл user_data.json в окно загрузки на нашем сайте. Скрипт сам найдет и визуализирует нужные данные."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Безопасно ли загружать сюда файл?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Да, абсолютно. Обработка происходит Client-Side (на вашем устройстве). Файл не отправляется на сервер, и никто, кроме вас, не видит эту статистику."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Почему статистика просмотров только за полгода?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Это ограничение платформы TikTok. С 2023 года в выгрузке данных история просмотров ('Browsing History') доступна только за последние 180 дней. Лайки и комментарии доступны за всё время."
+                }
+              }
+            ]
+          }
+        ]
       }
-    },
-    {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Как узнать, сколько времени я просидел в Тик Токе?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Скачайте файл данных (JSON) в настройках TikTok и загрузите его в наш анализатор. Мы суммируем длительность всех просмотров и покажем точное количество часов за год и среднее время в день."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Как открыть файл JSON или ZIP из TikTok?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Вам не нужны специальные программы. Просто перетащите скачанный ZIP-архив или файл user_data.json в окно загрузки на нашем сайте. Скрипт сам найдет и визуализирует нужные данные."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Безопасно ли загружать сюда файл?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Да, абсолютно. Обработка происходит Client-Side (на вашем устройстве). Файл не отправляется на сервер, и никто, кроме вас, не видит эту статистику."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Почему статистика просмотров только за полгода?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Это ограничение платформы TikTok. С 2023 года в выгрузке данных история просмотров ('Browsing History') доступна только за последние 180 дней. Лайки и комментарии доступны за всё время."
-          }
-        }
-      ]
-    }
-  ]
-}
-</script>
     </script>
     <meta
       name="google-site-verification"
@@ -499,9 +498,12 @@
           <button id="shareImageButton" class="action-btn">
             <i class="fas fa-share-alt"></i> Поделиться
           </button>
-          <button id="downloadSlidesButton" class="action-btn secondary" style="border-color: var(--color-tiktok-cyan); color: var(--color-tiktok-cyan);">
-        <i class="fas fa-images"></i> Слайды для TikTok
-    </button>
+
+          <button id="downloadSlidesButton" class="action-btn secondary">
+            <i class="fas fa-layer-group"></i>
+            <span id="slidesBtnText">Слайды TikTok</span>
+          </button>
+
           <button id="resetButton" class="action-btn secondary">
             <i class="fas fa-redo"></i> Заново
           </button>
@@ -672,7 +674,17 @@
     </div>
 
     <!-- Скрытый контейнер для генерации (Дизайн: Transparent Vibe) -->
-    <div id="shareCardContainer" style="position: absolute; left: -9999px; top: 0; width: 0; height: 0; overflow: hidden;">
+    <div
+      id="shareCardContainer"
+      style="
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      "
+    >
       <div
         id="shareCard"
         style="
@@ -927,89 +939,144 @@
       </div>
     </div>
 
-    <div id="slidesContainer" style="position: absolute; left: -9999px; top: 0; width: 0; height: 0; overflow: hidden;">
-    
-    <!-- Общий стиль фона для копирования -->
-    <!-- СЛАЙД 1: ОБЛОЖКА -->
-    <div id="slide1" class="tiktok-slide">
+    <div
+      id="slidesContainer"
+      style="
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      "
+    >
+      <!-- Общий стиль фона для копирования -->
+      <!-- СЛАЙД 1: ОБЛОЖКА -->
+      <div id="slide1" class="tiktok-slide">
         <div class="slide-bg"></div>
         <div class="slide-content centered">
-            <div class="s-year-huge">2025</div>
-            <div class="s-title-main">TIKTOK<br>ИТОГИ</div>
-            <div class="s-user-badge">@username</div>
+          <div class="s-year-huge">2025</div>
+          <div class="s-title-main">TIKTOK<br />ИТОГИ</div>
+          <div class="s-user-badge">@username</div>
         </div>
-        <div class="slide-footer">tiktok.viktoor.ru</div>
-    </div>
+        <div class="slide-footer">
+          <div class="s-footer-pill">
+            <span>tiktok.</span
+            ><span style="color: var(--color-tiktok-cyan)">viktoor.ru</span>
+          </div>
+        </div>
+      </div>
 
-    <!-- СЛАЙД 2: ВРЕМЯ -->
-    <div id="slide2" class="tiktok-slide">
+      <!-- СЛАЙД 2: ВРЕМЯ -->
+      <div id="slide2" class="tiktok-slide">
         <div class="slide-bg"></div>
         <div class="slide-header">@username</div>
         <div class="slide-content centered">
-            <div class="s-label">Время в потоке</div>
-            <div class="s-big-val color-pink" id="sTime">0 ч</div>
-            <div class="s-comment" id="sTimeComment">Загрузка...</div>
+          <div class="s-label">Время в потоке</div>
+          <div class="s-big-val color-pink" id="sTime">0 ч</div>
+          <div class="s-comment" id="sTimeComment">Загрузка...</div>
         </div>
-        <div class="slide-footer">tiktok.viktoor.ru</div>
-    </div>
+        <div class="slide-footer">
+          <div class="s-footer-pill">
+            <span>tiktok.</span
+            ><span style="color: var(--color-tiktok-cyan)">viktoor.ru</span>
+          </div>
+        </div>
+      </div>
 
-    <!-- СЛАЙД 3: ВИДЕО (Новый) -->
-    <div id="slide3" class="tiktok-slide">
+      <!-- СЛАЙД 3: ВИДЕО (Новый) -->
+      <div id="slide3" class="tiktok-slide">
         <div class="slide-bg"></div>
         <div class="slide-header">@username</div>
         <div class="slide-content centered">
-            <div class="s-label">Просмотрено</div>
-            <div class="s-big-val color-purple" id="sVideos">0</div>
-            <div class="s-sub">видеороликов</div>
-            <div class="s-comment" id="sVidComment" style="margin-top: 40px; color: #fff;">...</div>
+          <div class="s-label">Просмотрено</div>
+          <div class="s-big-val color-purple" id="sVideos">0</div>
+          <div class="s-sub">видеороликов</div>
+          <div
+            class="s-comment"
+            id="sVidComment"
+            style="margin-top: 40px; color: #fff"
+          >
+            ...
+          </div>
         </div>
-        <div class="slide-footer">tiktok.viktoor.ru</div>
-    </div>
+        <div class="slide-footer">
+          <div class="s-footer-pill">
+            <span>tiktok.</span
+            ><span style="color: var(--color-tiktok-cyan)">viktoor.ru</span>
+          </div>
+        </div>
+      </div>
 
-    <!-- СЛАЙД 4: ВАЙБ -->
-    <div id="slide4" class="tiktok-slide">
+      <!-- СЛАЙД 4: ВАЙБ -->
+      <div id="slide4" class="tiktok-slide">
         <div class="slide-bg"></div>
         <div class="slide-header">@username</div>
-        <div class="slide-content centered" style="padding: 0 60px;">
-            <div class="s-label">Мой статус</div>
-            <div class="s-persona color-cyan" id="sPersona">...</div>
-            <div class="s-desc" id="sDesc">...</div>
+        <div class="slide-content centered" style="padding: 0 60px">
+          <div class="s-label">Мой статус</div>
+          <div class="s-persona color-cyan" id="sPersona">...</div>
+          <div class="s-desc" id="sDesc">...</div>
         </div>
-        <div class="slide-footer">tiktok.viktoor.ru</div>
-    </div>
+        <div class="slide-footer">
+          <div class="s-footer-pill">
+            <span>tiktok.</span
+            ><span style="color: var(--color-tiktok-cyan)">viktoor.ru</span>
+          </div>
+        </div>
+      </div>
 
-    <!-- СЛАЙД 5: ЛАЙКИ (Новый) -->
-    <div id="slide5" class="tiktok-slide">
+      <!-- СЛАЙД 5: ЛАЙКИ (Новый) -->
+      <div id="slide5" class="tiktok-slide">
         <div class="slide-bg"></div>
         <div class="slide-header">@username</div>
         <div class="slide-content centered">
-            <div class="s-label">Щедрость</div>
-            <div class="s-big-val color-cyan" id="sLikes">0</div>
-            <div class="s-sub">лайков поставлено</div>
-            <div class="s-comment" id="sLikeComment" style="margin-top: 40px; color: #fff;">...</div>
+          <div class="s-label">Щедрость</div>
+          <div class="s-big-val color-cyan" id="sLikes">0</div>
+          <div class="s-sub">лайков поставлено</div>
+          <div
+            class="s-comment"
+            id="sLikeComment"
+            style="margin-top: 40px; color: #fff"
+          >
+            ...
+          </div>
         </div>
-        <div class="slide-footer">tiktok.viktoor.ru</div>
-    </div>
+        <div class="slide-footer">
+          <div class="s-footer-pill">
+            <span>tiktok.</span
+            ><span style="color: var(--color-tiktok-cyan)">viktoor.ru</span>
+          </div>
+        </div>
+      </div>
 
-    <!-- СЛАЙД 6: ФИНАЛ -->
-     <div id="slide6" class="tiktok-slide">
+      <!-- СЛАЙД 6: ФИНАЛ -->
+      <div id="slide6" class="tiktok-slide">
         <!-- Темный фон без ярких пятен по центру -->
-        <div class="slide-bg" style="background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);"></div>
+        <div
+          class="slide-bg"
+          style="
+            background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
+          "
+        ></div>
         <div class="slide-header">@username</div>
-        
+
         <div class="slide-content centered">
-            <div class="s-label" style="margin-bottom: 60px;">Узнай своё время</div>
-            
-            <!-- Ссылка в рамке -->
-            <div class="s-link-box">
-                <span style="color: #fff;">tiktok.</span><span style="color: var(--color-tiktok-cyan);">viktoor.ru</span>
-            </div>
+          <div class="s-label" style="margin-bottom: 60px">
+            Узнай своё время
+          </div>
 
-            <div class="s-sub" style="margin-top: 80px; opacity: 0.6;">Бесплатно. Безопасно.</div>
+          <!-- Ссылка в рамке -->
+          <div class="s-link-box">
+            <span style="color: #fff">tiktok.</span
+            ><span style="color: var(--color-tiktok-cyan)">viktoor.ru</span>
+          </div>
+
+          <div class="s-sub" style="margin-top: 80px; opacity: 0.6">
+            Бесплатно. Безопасно.
+          </div>
         </div>
+      </div>
     </div>
-
-</div>
 
     <!-- Модальные окна для загрузки файла -->
     <div class="modal" id="uploadModal">
@@ -1059,18 +1126,33 @@
       </div>
     </div>
     <div class="modal" id="slidesModal">
-    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-content" style="max-width: 800px">
         <h2>Ваши слайды готовы</h2>
         <p>Сохраните их в галерею (долгое нажатие), чтобы выложить в TikTok.</p>
-        
+
         <!-- Контейнер для картинок -->
-        <div id="generatedSlidesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
-            <!-- Сюда JS вставит <img> -->
+        <div
+          id="generatedSlidesGrid"
+          style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+          "
+        >
+          <!-- Сюда JS вставит <img> -->
         </div>
 
-        <button class="modal-button" onclick="document.getElementById('slidesModal').style.display='none'">Закрыть</button>
-        <button class="modal-button secondary-button" id="downloadZipBtn">Скачать всё архивом (ZIP)</button>
+        <button
+          class="modal-button"
+          onclick="document.getElementById('slidesModal').style.display='none'"
+        >
+          Закрыть
+        </button>
+        <button class="modal-button secondary-button" id="downloadZipBtn">
+          Скачать всё архивом (ZIP)
+        </button>
+      </div>
     </div>
-</div>
   </body>
 </html>
