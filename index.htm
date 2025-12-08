@@ -499,6 +499,9 @@
           <button id="shareImageButton" class="action-btn">
             <i class="fas fa-share-alt"></i> Поделиться
           </button>
+          <button id="downloadSlidesButton" class="action-btn secondary" style="border-color: var(--color-tiktok-cyan); color: var(--color-tiktok-cyan);">
+        <i class="fas fa-images"></i> Для TikTok
+    </button>
           <button id="resetButton" class="action-btn secondary">
             <i class="fas fa-redo"></i> Заново
           </button>
@@ -926,6 +929,75 @@
         </div>
       </div>
     </div>
+
+    <div id="slidesContainer" style="position: absolute; left: -9999px; top: 0;">
+    
+    <!-- СЛАЙД 1: ОБЛОЖКА -->
+    <div id="slide1" class="tiktok-slide" style="width: 1080px; height: 1920px; background: #050505; font-family: 'Inter', sans-serif; position: relative; overflow: hidden; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        <!-- Фон -->
+        <div style="position: absolute; top: -300px; left: -300px; width: 1200px; height: 1200px; background: radial-gradient(circle, rgba(110, 207, 203, 0.2) 0%, transparent 70%);"></div>
+        <div style="position: absolute; bottom: -300px; right: -300px; width: 1200px; height: 1200px; background: radial-gradient(circle, rgba(237, 29, 81, 0.2) 0%, transparent 70%);"></div>
+        
+        <div style="position: relative; z-index: 2;">
+            <div class="s-user" style="font-size: 3rem; color: #aaa; margin-bottom: 40px; font-weight: 600;">@username</div>
+            <div style="font-size: 15rem; font-weight: 900; line-height: 0.8; letter-spacing: -10px; background: linear-gradient(to right, #23d5ab, #ff0050); -webkit-background-clip: text; color: transparent;">2025</div>
+            <div style="font-size: 5rem; font-weight: 800; text-transform: uppercase; letter-spacing: 20px; margin-top: 40px; color: white;">ИТОГИ ГОДА</div>
+            <div style="font-size: 2rem; color: #666; margin-top: 100px; text-transform: uppercase; letter-spacing: 5px;">Моя статистика</div>
+        </div>
+    </div>
+
+    <!-- СЛАЙД 2: ВРЕМЯ (Статистика) -->
+    <div id="slide2" class="tiktok-slide" style="width: 1080px; height: 1920px; background: #050505; font-family: 'Inter', sans-serif; position: relative; overflow: hidden; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1000px; height: 1000px; background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);"></div>
+        
+        <div style="position: relative; z-index: 2; display: flex; flex-direction: column; gap: 100px;">
+            <div>
+                <div style="font-size: 2.5rem; text-transform: uppercase; color: #666; margin-bottom: 20px;">Времени в ленте</div>
+                <div id="sTime" style="font-size: 12rem; font-weight: 900; line-height: 1; color: #ff0050; text-shadow: 0 0 50px rgba(255,0,80,0.3);">0 ч</div>
+            </div>
+            <div>
+                <div style="font-size: 2.5rem; text-transform: uppercase; color: #666; margin-bottom: 20px;">Заходов</div>
+                <div id="sSessions" style="font-size: 8rem; font-weight: 800; line-height: 1; color: #f4d03f;">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- СЛАЙД 3: ВАЙБ (Персона) -->
+    <div id="slide3" class="tiktok-slide" style="width: 1080px; height: 1920px; background: #050505; font-family: 'Inter', sans-serif; position: relative; overflow: hidden; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 80px;">
+        <!-- Фон (Пятна) -->
+        <div style="position: absolute; top: 0; right: 0; width: 800px; height: 800px; background: radial-gradient(circle, rgba(166, 0, 244, 0.2) 0%, transparent 70%);"></div>
+        
+        <div style="position: relative; z-index: 2;">
+            <div style="font-size: 3rem; text-transform: uppercase; color: #23d5ab; letter-spacing: 5px; margin-bottom: 50px;">Мой диагноз</div>
+            
+            <!-- Адаптивный текст -->
+            <div id="sPersona" style="font-size: 8rem; font-weight: 900; line-height: 1.1; margin-bottom: 50px; color: #ffffff; text-shadow: 0 0 40px rgba(255,255,255,0.2);">
+                ...
+            </div>
+            
+            <div id="sDesc" style="font-size: 2.5rem; color: #ccc; line-height: 1.5;">
+                ...
+            </div>
+        </div>
+    </div>
+
+    <!-- СЛАЙД 4: ФИНАЛ (Ссылка) -->
+    <div id="slide4" class="tiktok-slide" style="width: 1080px; height: 1920px; background: #050505; font-family: 'Inter', sans-serif; position: relative; overflow: hidden; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        
+        <div style="font-size: 3rem; color: #888; margin-bottom: 40px; font-weight: 600;">Узнай свою статистику:</div>
+        
+        <div style="background: #111; padding: 40px 80px; border-radius: 50px; border: 3px solid #333;">
+            <span style="font-size: 3.5rem; font-weight: 700; color: #fff;">tiktok.</span><span style="font-size: 3.5rem; font-weight: 700; color: #23d5ab;">viktoor.ru</span>
+        </div>
+
+        <div style="margin-top: 100px;">
+            <div style="font-size: 2rem; color: #666; margin-bottom: 20px;">Мой главный эмодзи</div>
+            <div id="sEmoji" style="font-size: 8rem;">🤡</div>
+        </div>
+    </div>
+
+</div>
+
     <!-- Модальные окна для загрузки файла -->
     <div class="modal" id="uploadModal">
       <div class="modal-content">
@@ -973,5 +1045,19 @@
         <div id="uploadStatus"></div>
       </div>
     </div>
+    <div class="modal" id="slidesModal">
+    <div class="modal-content" style="max-width: 800px;">
+        <h2>Ваши слайды готовы</h2>
+        <p>Сохраните их в галерею (долгое нажатие), чтобы выложить в TikTok.</p>
+        
+        <!-- Контейнер для картинок -->
+        <div id="generatedSlidesGrid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0;">
+            <!-- Сюда JS вставит <img> -->
+        </div>
+
+        <button class="modal-button" onclick="document.getElementById('slidesModal').style.display='none'">Закрыть</button>
+        <button class="modal-button secondary-button" id="downloadZipBtn">Скачать всё архивом (ZIP)</button>
+    </div>
+</div>
   </body>
 </html>

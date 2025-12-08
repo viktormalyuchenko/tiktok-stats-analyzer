@@ -741,6 +741,160 @@ async function generateAndShareImage() {
   }
 }
 
+document
+  .getElementById("downloadSlidesButton")
+  ?.addEventListener("click", generateCarousel);
+
+let generatedBlobs = [];
+
+async function generateCarousel() {
+  // Подгружаем только html2canvas (JSZip нужен только для кнопки "Скачать всё")
+  if (typeof html2canvas === "undefined")
+    await import(
+      "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+    );
+  if (typeof JSZip === "undefined")
+    await import(
+      "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+    );
+
+  updateStatus("Генерируем слайды...", "loading");
+
+  if (!currentAnalysisResult) return;
+  const stats = currentAnalysisResult;
+
+  // 1. ЗАПОЛНЕНИЕ ДАННЫХ
+  const userName = stats.profile?.slideInfo?.userName || "User";
+  document.querySelector("#slide1 .s-user").textContent = userName;
+
+  // Слайд 2: Время и Сессии
+  const hours = stats.watchHistory?.slideInfo?.totalWatchTimeHours || 0;
+  const sessions = stats.watchHistory?.slideInfo?.watchSessions || 0;
+  document.getElementById("sTime").textContent = hours + " ч";
+  document.getElementById("sSessions").textContent = nFmt(sessions);
+
+  // Слайд 3: Вайб (Адаптив)
+  const pData = getPersonaDetails(stats);
+  const pEl = document.getElementById("sPersona");
+  pEl.textContent = pData.title;
+
+  // Простая логика размера шрифта для слайда
+  if (pData.title.length > 15) pEl.style.fontSize = "6rem";
+  else if (pData.title.length > 10) pEl.style.fontSize = "7rem";
+  else pEl.style.fontSize = "9rem"; // Очень крупно для коротких
+
+  document.getElementById("sDesc").textContent = pData.desc;
+
+  // Слайд 4: Эмодзи
+  const emoji = stats.comments?.slideInfo?.mostUsedEmoji || "✨";
+  document.getElementById("sEmoji").textContent = emoji;
+  // Адаптив шрифта
+  pEl.style.fontSize = pData.title.length > 15 ? "5rem" : "7rem";
+  document.getElementById("sDesc").textContent = pData.desc;
+
+  // 2. РЕНДЕР
+  const slideIds = ["slide1", "slide2", "slide3", "slide4"];
+  generatedBlobs = [];
+
+  try {
+    for (let i = 0; i < slideIds.length; i++) {
+      updateStatus(`Рисуем слайд ${i + 1}/4...`, "loading");
+      const el = document.getElementById(slideIds[i]);
+
+      const canvas = await html2canvas(el, {
+        backgroundColor: "#000",
+        scale: 1,
+      });
+      const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
+
+      generatedBlobs.push({ name: `tiktok-slide-${i + 1}.png`, blob: blob });
+    }
+
+    // 3. ПОКАЗЫВАЕМ ГАЛЕРЕЮ (ВСЕГДА)
+    updateStatus("Готово!", "success");
+    setTimeout(() => updateStatus(""), 1000);
+
+    showSlidesModal(generatedBlobs);
+  } catch (e) {
+    console.error(e);
+    updateStatus("Ошибка: " + e.message, "error");
+  }
+}
+
+// Отображение галереи
+function showSlidesModal(blobs) {
+  const grid = document.getElementById("generatedSlidesGrid");
+  if (!grid) return;
+
+  grid.innerHTML = "";
+
+  blobs.forEach((item, index) => {
+    const url = URL.createObjectURL(item.blob);
+
+    // Контейнер картинки
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.gap = "5px";
+
+    // Картинка
+    const img = document.createElement("img");
+    img.src = url;
+    img.style.width = "100%";
+    img.style.borderRadius = "8px";
+    img.style.border = "1px solid #333";
+
+    // Кнопка под картинкой (для удобства на ПК)
+    const downLink = document.createElement("a");
+    downLink.href = url;
+    downLink.download = item.name;
+    downLink.className = "action-btn secondary"; // Используем наш класс кнопки
+    downLink.style.fontSize = "0.8rem";
+    downLink.style.padding = "5px";
+    downLink.innerHTML = `<i class="fas fa-download"></i> Слайд ${index + 1}`;
+
+    // Обертка для клика по картинке
+    const imgLink = document.createElement("a");
+    imgLink.href = url;
+    imgLink.download = item.name;
+    imgLink.appendChild(img);
+
+    container.appendChild(imgLink);
+    container.appendChild(downLink);
+
+    grid.appendChild(container);
+  });
+
+  // Открываем модалку
+  const modal = document.getElementById("slidesModal");
+  if (modal) {
+    modal.style.display = "flex";
+
+    // Кнопка ZIP
+    const zipBtn = document.getElementById("downloadZipBtn");
+    if (zipBtn) {
+      const newBtn = zipBtn.cloneNode(true);
+      zipBtn.parentNode.replaceChild(newBtn, zipBtn);
+      newBtn.addEventListener("click", () => downloadAsZip(blobs));
+    }
+  }
+}
+
+// Скачивание ZIP (Опционально)
+function downloadAsZip(blobs) {
+  if (typeof JSZip === "undefined") return;
+  const zip = new JSZip();
+  blobs.forEach((item) => zip.file(item.name, item.blob));
+  zip.generateAsync({ type: "blob" }).then((content) => {
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(content);
+    link.download = "tiktok-slides.zip";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
+}
+
 // --- Метрика ---
 function reachMetrikaGoal(goal) {
   if (typeof ym === "function") ym(99841001, "reachGoal", goal);
