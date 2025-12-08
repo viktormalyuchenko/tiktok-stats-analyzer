@@ -384,4 +384,36 @@ const TikTokAnalyzer = {
       return { valid: false, error: "Неверный формат JSON" };
     return { valid: true };
   },
+
+  getFunPhrases(stats) {
+    const hours = stats.watchHistory?.slideInfo?.totalWatchTimeHours || 0;
+    const videos = stats.watchHistory?.slideInfo?.videoCount || 0;
+    const likes = stats.likes?.slideInfo?.likeCount || 0;
+    const days = (hours / 24).toFixed(1);
+
+    // 1. Фраза про ВРЕМЯ
+    let timePhrase = `Это ${days} дней непрерывного просмотра.`;
+    if (hours < 50)
+      timePhrase = "Ты почти не заходишь сюда. У тебя есть жизнь?";
+    else if (hours < 200)
+      timePhrase = `Это ${days} дней. Можно было прочитать 10 книг.`;
+    else if (hours < 500)
+      timePhrase = `Потрачено ${days} дней. Твой экран телефона устал.`;
+    else
+      timePhrase = `Это ${days} дней твоей жизни. Можно было выучить китайский 💀`;
+
+    // 2. Фраза про ВИДЕО
+    let videoPhrase = "Твой палец накачан от скроллинга.";
+    if (videos > 5000)
+      videoPhrase = "Алгоритм TikTok: “Мы сдаёмся, ты посмотрел всё.”";
+    if (videos > 20000) videoPhrase = "Ты видел конец ленты? Скажи честно.";
+
+    // 3. Фраза про ЛАЙКИ
+    let likePhrase = "Ты скупой на лайки.";
+    if (likes > 5000) likePhrase = "Ты раздаешь лайки как бесплатный Wi-Fi.";
+    if (likes > 10000)
+      likePhrase = "Твоё сердце слишком большое для этого приложения ❤️";
+
+    return { timePhrase, videoPhrase, likePhrase };
+  },
 };

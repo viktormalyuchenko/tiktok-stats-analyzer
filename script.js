@@ -748,61 +748,65 @@ document
 let generatedBlobs = [];
 
 async function generateCarousel() {
-  // Подгружаем только html2canvas (JSZip нужен только для кнопки "Скачать всё")
   if (typeof html2canvas === "undefined")
     await import(
       "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
     );
-  if (typeof JSZip === "undefined")
-    await import(
-      "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
-    );
 
   updateStatus("Генерируем слайды...", "loading");
-
   if (!currentAnalysisResult) return;
   const stats = currentAnalysisResult;
 
-  // 1. ЗАПОЛНЕНИЕ ДАННЫХ
   const userName = stats.profile?.slideInfo?.userName || "User";
-  document.querySelector("#slide1 .s-user").textContent = userName;
 
-  // Слайд 2: Время и Сессии
+  // --- 1. ЗАПОЛНЕНИЕ ДАННЫХ ---
+
+  // Все слайды: ставим никнейм в хедер
+  document
+    .querySelectorAll(".slide-header")
+    .forEach((el) => (el.textContent = userName));
+  document.querySelector(".s-user-badge").textContent = userName;
+
+  // Получаем смешные фразы
+  const phrases = TikTokAnalyzer.getFunPhrases(stats);
+
+  // Слайд 2: Время
   const hours = stats.watchHistory?.slideInfo?.totalWatchTimeHours || 0;
-  const sessions = stats.watchHistory?.slideInfo?.watchSessions || 0;
   document.getElementById("sTime").textContent = hours + " ч";
-  document.getElementById("sSessions").textContent = nFmt(sessions);
+  document.getElementById("sTimeComment").textContent = phrases.timePhrase;
 
-  // Слайд 3: Вайб (Адаптив)
+  // Слайд 3: Видео
+  const videos = stats.watchHistory?.slideInfo?.videoCount || 0;
+  document.getElementById("sVideos").textContent = nFmt(videos);
+  document.getElementById("sVidComment").textContent = phrases.videoPhrase;
+
+  // Слайд 4: Вайб
   const pData = getPersonaDetails(stats);
   const pEl = document.getElementById("sPersona");
   pEl.textContent = pData.title;
-
-  // Простая логика размера шрифта для слайда
-  if (pData.title.length > 15) pEl.style.fontSize = "6rem";
-  else if (pData.title.length > 10) pEl.style.fontSize = "7rem";
-  else pEl.style.fontSize = "9rem"; // Очень крупно для коротких
-
-  document.getElementById("sDesc").textContent = pData.desc;
-
-  // Слайд 4: Эмодзи
-  const emoji = stats.comments?.slideInfo?.mostUsedEmoji || "✨";
-  document.getElementById("sEmoji").textContent = emoji;
   // Адаптив шрифта
-  pEl.style.fontSize = pData.title.length > 15 ? "5rem" : "7rem";
+  if (pData.title.length > 15) pEl.style.fontSize = "6rem";
+  else if (pData.title.length > 10) pEl.style.fontSize = "8rem";
+  else pEl.style.fontSize = "10rem";
+
   document.getElementById("sDesc").textContent = pData.desc;
 
-  // 2. РЕНДЕР
-  const slideIds = ["slide1", "slide2", "slide3", "slide4"];
+  // Слайд 5: Лайки
+  const likes = stats.likes?.slideInfo?.likeCount || 0;
+  document.getElementById("sLikes").textContent = nFmt(likes);
+  document.getElementById("sLikeComment").textContent = phrases.likePhrase;
+
+  // --- 2. РЕНДЕР ---
+  const slideIds = ["slide1", "slide2", "slide3", "slide4", "slide5", "slide6"];
   generatedBlobs = [];
 
   try {
     for (let i = 0; i < slideIds.length; i++) {
-      updateStatus(`Рисуем слайд ${i + 1}/4...`, "loading");
+      updateStatus(`Рисуем слайд ${i + 1}/6...`, "loading");
       const el = document.getElementById(slideIds[i]);
 
       const canvas = await html2canvas(el, {
-        backgroundColor: "#000",
+        backgroundColor: "#050505",
         scale: 1,
       });
       const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
@@ -810,10 +814,8 @@ async function generateCarousel() {
       generatedBlobs.push({ name: `tiktok-slide-${i + 1}.png`, blob: blob });
     }
 
-    // 3. ПОКАЗЫВАЕМ ГАЛЕРЕЮ (ВСЕГДА)
     updateStatus("Готово!", "success");
     setTimeout(() => updateStatus(""), 1000);
-
     showSlidesModal(generatedBlobs);
   } catch (e) {
     console.error(e);
@@ -976,6 +978,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // Закрытие модалок по клику на фон
   window.onclick = (e) => {
     if (e.target === uploadModal) hideModal(uploadModal);
+    const slidesModal = document.getElementById("slidesModal");
+    if (e.target === slidesModal) {
+      // Плавное закрытие (как на кнопке "Закрыть")
+      slidesModal.style.opacity = "0";
+      setTimeout(() => (slidesModal.style.display = "none"), 300);
+    }
   };
 
   // Демо режим
