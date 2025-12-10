@@ -49,7 +49,6 @@ html,
 body {
   font-family: var(--font-main);
   background-color: var(--bg-body) !important;
-  /* ХАК ДЛЯ SAMSUNG: Фон задан как градиент, чтобы браузер не инвертировал цвета */
   background-image: radial-gradient(
       circle at 15% 50%,
       rgba(110, 207, 203, 0.08),
@@ -64,6 +63,8 @@ body {
   min-height: 100vh;
   padding: 20px 5px;
   forced-color-adjust: none;
+  margin: 0;
+  padding: 0;
 }
 
 /* --- SITE NAVIGATION --- */
@@ -1130,13 +1131,114 @@ h1 {
   width: 100%;
 }
 
-footer {
+footer.site-footer {
+  margin-bottom: 0;
+}
+
+.site-footer {
+  background-color: #0a0a0a; /* Чуть светлее черного фона */
   border-top: 1px solid var(--border-color);
-  padding-top: 30px;
-  margin-top: 100px; /* Добавили большой отступ сверху */
+  padding: 60px 20px 20px;
+  margin-top: 100px;
+  font-size: 0.95rem;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr; /* Первая колонка шире */
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+/* Колонки */
+.footer-col h4 {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.footer-logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  letter-spacing: -1px;
+}
+
+.footer-desc {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 300px;
+}
+
+.footer-disclaimer {
   color: var(--text-muted);
-  text-align: center;
-  padding-bottom: 40px; /* Чтобы на мобилках было место снизу */
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Ссылки */
+.footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s, padding-left 0.2s;
+}
+
+.footer-links a:hover {
+  color: var(--color-tiktok-cyan);
+  padding-left: 5px; /* Эффект сдвига при наведении */
+}
+
+/* Нижняя полоска */
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.footer-socials a {
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  transition: color 0.3s;
+}
+.footer-socials a:hover {
+  color: white;
+}
+
+/* Адаптив футера */
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr; /* Одна колонка */
+    gap: 40px;
+    text-align: center;
+  }
+
+  .footer-desc {
+    margin: 0 auto 20px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 15px;
+  }
 }
 
 /* --- TIKTOK SLIDES GENERATION --- */

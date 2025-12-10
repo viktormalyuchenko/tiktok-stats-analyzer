@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Как открыть файл user_data.json из TikTok? Инструкция</title>
+    <meta
+      name="description"
+      content="Не знаете, чем открыть JSON файл с данными ТикТок? Обзор структуры архива, программы для просмотра и онлайн-визуализатор статистики."
+    />
+    <link
+      rel="canonical"
+      href="https://tiktok.viktoor.ru/articles/how-to-open-tiktok-json.html"
+    />
+
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../article-style.css" />
+    <link rel="icon" href="../images/favicon.ico" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <nav class="site-nav">
+      <a href="../index.html" class="nav-logo">
+        <span style="color: white">TikTok</span
+        ><span style="color: var(--color-tiktok-cyan)">Stats</span>
+      </a>
+    </nav>
+
+    <div class="article-wrapper">
+      <div class="breadcrumbs">
+        <a href="../index.html">Главная</a> <span>/</span>
+        <a href="index.html">Блог</a> <span>/</span> Технологии
+      </div>
+
+      <article class="article-content">
+        <h1>Чем открыть файл user_data.json из TikTok?</h1>
+
+        <p>
+          Вы запросили свои данные в TikTok, подождали пару дней и получили
+          ZIP-архив. Внутри вы нашли файл с названием
+          <code>user_data.json</code> (или похожим). Что с ним делать дальше?
+        </p>
+
+        <p>
+          JSON (JavaScript Object Notation) — это формат обмена данными, который
+          легко читается компьютерами, но может быть сложным для восприятия
+          человеком, особенно если файл весит сотни мегабайт.
+        </p>
+
+        <h2>Способ 1: Текстовые редакторы (Для профи)</h2>
+        <p>
+          Если вы хотите увидеть "сырой" код, вы можете открыть файл в любой
+          программе для работы с текстом:
+        </p>
+        <ul>
+          <li>
+            <strong>Windows:</strong> Блокнот (Notepad), но он может зависнуть
+            на больших файлах. Лучше использовать Notepad++.
+          </li>
+          <li><strong>macOS:</strong> TextEdit.</li>
+          <li>
+            <strong>Разработчикам:</strong> VS Code или Sublime Text (они
+            подсветят синтаксис).
+          </li>
+        </ul>
+        <p>
+          <strong>Минус:</strong> Вы увидите миллионы строк текста. Найти там
+          что-то полезное (например, "сколько всего видео я посмотрел") вручную
+          практически невозможно.
+        </p>
+
+        <h2>Способ 2: Онлайн JSON Viewer (Неудобно)</h2>
+        <p>
+          Существуют сайты, которые форматируют JSON в виде дерева. Вы можете
+          загрузить файл туда, но:
+        </p>
+        <ol>
+          <li>
+            Это часто небезопасно (вы отправляете свои данные на чужой сервер).
+          </li>
+          <li>Браузер может зависнуть из-за объема данных.</li>
+          <li>Вам всё равно придется искать нужные поля вручную.</li>
+        </ol>
+
+        <!-- CTA -->
+        <div class="cta-box">
+          <h2>Способ 3: Наш Визуализатор (Рекомендуем)</h2>
+          <p>
+            Мы создали специальный инструмент, который "читает" этот сложный
+            файл за вас и превращает его в понятные графики и цифры.
+          </p>
+          <a href="../index.html" class="cta-btn"
+            ><i class="fas fa-magic"></i> Открыть файл красиво</a
+          >
+        </div>
+
+        <h2>Структура файла: Что искать?</h2>
+        <p>
+          Если вы все-таки решили изучить файл самостоятельно, вот основные
+          разделы, которые могут быть вам интересны:
+        </p>
+
+        <h3>Activity (Активность)</h3>
+        <p>
+          Самый объемный раздел. Ищите ключ
+          <code>"Video Browsing History"</code>. Это список всех видео, которые
+          вы открывали. Каждая запись содержит:
+        </p>
+        <ul>
+          <li><strong>Date:</strong> Время просмотра (обычно в UTC).</li>
+          <li><strong>Link:</strong> Ссылка на видео.</li>
+        </ul>
+
+        <h3>Comments (Комментарии)</h3>
+        <p>
+          Раздел <code>"Comment History"</code> хранит тексты всех ваших
+          комментариев. Это отличный способ найти старые дискуссии или
+          вспомнить, что вы писали год назад.
+        </p>
+
+        <h3>Likes (Лайки)</h3>
+        <p>
+          Раздел <code>"Like List"</code> содержит ссылки на все понравившиеся
+          вам видео. Наш сервис использует этот раздел, чтобы посчитать ваш
+          "Коэффициент щедрости" (Like Ratio).
+        </p>
+
+        <h2>Нужно ли распаковывать ZIP?</h2>
+        <p>
+          Для большинства программ — да. Но наш анализатор умеет работать с
+          <strong>ZIP-архивом напрямую</strong>. Вам не нужно тратить время на
+          распаковку — просто перетащите скачанный архив в окно загрузки, и
+          скрипт сам найдет внутри нужный JSON файл.
+        </p>
+      </article>
+    </div>
+
+    <footer>
+      <p>TikTok Stats Analyzer © 2025</p>
+    </footer>
+  </body>
+</html>

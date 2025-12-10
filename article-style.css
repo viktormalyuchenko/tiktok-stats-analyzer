@@ -1,0 +1,283 @@
+/* --- СТИЛИ ДЛЯ БЛОГА И СТАТЕЙ --- */
+
+body {
+  display: block !important; /* Отключаем флекс, делаем обычные блоки */
+  height: auto !important;
+  overflow-y: auto !important; /* Разрешаем нормальный скролл */
+}
+
+/* Центрируем контейнер, так как flex больше не центрирует */
+.container {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Убедимся, что футер внизу */
+footer {
+  width: 100%;
+  margin-top: auto; /* Прижимаем к низу, если контента мало */
+}
+
+/* 1. ОБЩИЙ КОНТЕЙНЕР СТАТЬИ */
+.article-wrapper {
+  max-width: 800px; /* Оптимальная ширина для чтения */
+  margin: 0 auto;
+  padding: 40px 20px;
+  margin-top: 60px; /* Отступ от шапки */
+}
+
+/* 2. ТИПОГРАФИКА (Для комфортного чтения) */
+.article-content {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: #e2e8f0; /* Чуть светлее, чем основной текст, для контраста */
+}
+
+/* Заголовки */
+.article-content h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  background: var(--header-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.article-content h2 {
+  font-size: 1.8rem;
+  color: white;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.article-content h3 {
+  font-size: 1.4rem;
+  color: white;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+/* Текст */
+.article-content p {
+  margin-bottom: 25px;
+}
+
+/* Списки */
+.article-content ul,
+.article-content ol {
+  margin-bottom: 25px;
+  padding-left: 20px;
+  color: var(--text-secondary);
+}
+.article-content li {
+  margin-bottom: 10px;
+}
+
+/* Картинки внутри статьи */
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  margin: 30px 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Ссылки в тексте */
+.article-content a {
+  color: var(--color-tiktok-cyan);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 0.2s;
+}
+.article-content a:hover {
+  color: white;
+}
+
+/* 3. ХЛЕБНЫЕ КРОШКИ */
+.breadcrumbs {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+.breadcrumbs a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.breadcrumbs a:hover {
+  color: var(--color-tiktok-cyan);
+}
+.breadcrumbs span {
+  margin: 0 10px;
+  color: var(--border-color);
+}
+
+/* 4. CTA BOX (Вставка с рекламой инструмента) */
+.cta-box {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 30, 30, 0.6),
+    rgba(10, 10, 10, 0.8)
+  );
+  border: 1px solid var(--color-tiktok-cyan);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  margin: 60px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Декор для CTA */
+.cta-box::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background: var(--color-tiktok-cyan);
+  filter: blur(80px);
+  opacity: 0.2;
+}
+
+.cta-box h2 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  color: white;
+}
+
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-image: var(--primary-gradient);
+  color: black !important; /* Важно перебить стиль ссылок */
+  font-weight: 700;
+  padding: 15px 40px;
+  border-radius: 50px;
+  text-decoration: none !important;
+  font-size: 1.1rem;
+  margin-top: 20px;
+  transition: transform 0.2s;
+}
+.cta-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* 5. СТИЛИ ДЛЯ ГЛАВНОЙ БЛОГА (Card Grid) */
+.blog-header {
+  text-align: center;
+  padding: 60px 20px;
+}
+.blog-header h1 {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+  background: var(--header-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.blog-desc {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  margin-bottom: 80px;
+}
+
+.article-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none !important;
+  height: 100%;
+}
+.article-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border-color: var(--text-secondary);
+}
+
+.card-image {
+  height: 220px;
+  background: linear-gradient(135deg, #1e1e1e, #111);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 5rem;
+}
+.card-content {
+  padding: 30px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.card-tag {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-tiktok-cyan);
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 15px;
+  line-height: 1.3;
+}
+.card-excerpt {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 25px;
+  flex-grow: 1;
+}
+.read-more {
+  color: white;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+.read-more i {
+  transition: transform 0.2s;
+  font-size: 0.8em;
+}
+.article-card:hover .read-more i {
+  transform: translateX(5px);
+  color: var(--color-tiktok-pink);
+}
+
+/* Адаптив */
+@media (max-width: 600px) {
+  .article-wrapper {
+    padding: 20px;
+    margin-top: 40px;
+  }
+  .article-content h1 {
+    font-size: 2rem;
+  }
+  .blog-header h1 {
+    font-size: 2.5rem;
+  }
+}
