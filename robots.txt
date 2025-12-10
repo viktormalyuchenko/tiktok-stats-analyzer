@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tiktok.viktoor.ru/sitemap.xml
+Host: https://tiktok.viktoor.ru
