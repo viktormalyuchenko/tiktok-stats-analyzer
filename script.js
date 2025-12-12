@@ -661,7 +661,7 @@ async function generateAndShareImage() {
       "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
     );
   }
-
+  reachMetrikaGoal("share_results");
   updateStatus("Рисуем карточку...", "loading");
 
   // Заполнение данными
@@ -752,6 +752,7 @@ let generatedBlobs = [];
 let cachedSlidesBlobs = null;
 
 async function generateCarousel() {
+  reachMetrikaGoal("download_slides");
   if (cachedSlidesBlobs && cachedSlidesBlobs.length > 0) {
     showSlidesModal(cachedSlidesBlobs);
     return;
@@ -970,7 +971,10 @@ function reachMetrikaGoal(goal) {
 // --- Инициализация ---
 document.addEventListener("DOMContentLoaded", () => {
   // Event Listeners
-  startButton?.addEventListener("click", () => showModal(uploadModal));
+  startButton?.addEventListener("click", () => {
+    showModal(uploadModal);
+    reachMetrikaGoal("start_analysis");
+  });
 
   downloadSlidesButton?.addEventListener("click", generateCarousel);
 
@@ -1030,16 +1034,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   storyTrigger?.addEventListener("click", () => {
+    reachMetrikaGoal("play_recap");
     startFullscreenSlideshow();
   });
 
   // Также при нажатии на Enter на аватарке (доступность)
   storyTrigger?.addEventListener("keydown", (e) => {
+    reachMetrikaGoal("play_recap");
     if (e.key === "Enter") startFullscreenSlideshow();
   });
 
   // Misc
-  resetButton?.addEventListener("click", resetToInitialState);
+  resetButton?.addEventListener("click", () => {
+    reachMetrikaGoal("reset_analysis");
+    resetToInitialState();
+  });
   shareImageButton?.addEventListener("click", generateAndShareImage);
 
   // Закрытие модалок по клику на фон
@@ -1055,6 +1064,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Демо режим
   demoButton?.addEventListener("click", () => {
+    reachMetrikaGoal("view_demo");
     // Создаем фейк-данные для демо
     const fakeData = {
       Profile: { "Profile Info": { ProfileMap: { userName: "DemoUser" } } },
