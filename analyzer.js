@@ -79,7 +79,7 @@ const TikTokAnalyzer = {
       if (date && date.getUTCFullYear() === year) {
         yearVideos.push({ date, obj: v });
 
-        // Статистика
+        // Статистика по часам и месяцам
         monthlyActivity[date.getMonth()]++;
         try {
           const hourStr = date.toLocaleString("en-US", {
@@ -127,18 +127,18 @@ const TikTokAnalyzer = {
       }
     }
 
-    // --- Метрики ---
+    // --- Базовые Метрики (ФАКТ) ---
     const avgWatchTimeSec = 15;
     const totalMinutes = Math.round((count * avgWatchTimeSec) / 60);
     const totalHours = Math.round(totalMinutes / 60);
     const dailyAvg = (totalHours / daysSpan).toFixed(1);
 
-    // Сессии
-    let sessions = 0;
+    // --- Сессии (ФАКТ) ---
+    let realSessions = 0;
     let longestSession = 0;
     let currentSessionVideos = 0;
     if (count > 0) {
-      sessions = 1;
+      realSessions = 1;
       currentSessionVideos = 1;
       for (let i = 1; i < count; i++) {
         const diff =
@@ -148,7 +148,7 @@ const TikTokAnalyzer = {
             longestSession,
             (currentSessionVideos * avgWatchTimeSec) / 60
           );
-          sessions++;
+          realSessions++;
           currentSessionVideos = 1;
         } else {
           currentSessionVideos++;
@@ -159,6 +159,20 @@ const TikTokAnalyzer = {
         (currentSessionVideos * avgWatchTimeSec) / 60
       );
     }
+
+    // --- АВТО-ПРОГНОЗ (Extrapolation) ---
+    // Если данных мало, умножаем их до года
+    let finalHours = totalHours;
+    let finalVideos = count;
+    let finalSessions = realSessions;
+
+    if (isPartial && daysSpan > 0) {
+      const multiplier = 365 / daysSpan;
+      finalHours = Math.round(totalHours * multiplier);
+      finalVideos = Math.round(count * multiplier);
+      finalSessions = Math.round(realSessions * multiplier);
+    }
+    // -------------------------------------
 
     const days = [
       "Воскресенье",
@@ -176,11 +190,11 @@ const TikTokAnalyzer = {
 
     return {
       tableData: {
-        "Видео просмотрено": count.toLocaleString(),
-        "Общее время (оценка)": `${totalHours} часов (${totalMinutes.toLocaleString()} мин)`,
+        "Видео просмотрено (Факт)": count.toLocaleString(),
+        "Общее время (Факт)": `${totalHours} часов (${totalMinutes.toLocaleString()} мин)`,
         "Период данных": isPartial ? `⚠️ ${dateRangeString}` : dateRangeString,
         "Среднее время в день": `${dailyAvg} часа`,
-        "Количество сессий": sessions.toLocaleString(),
+        "Количество сессий": realSessions.toLocaleString(),
         "Самая долгая сессия": `~${Math.round(longestSession)} мин`,
         "Любимый день недели": favDay,
         "Ночная активность (00-05)": `${
@@ -189,15 +203,22 @@ const TikTokAnalyzer = {
         "Активность в выходные": `${
           count > 0 ? Math.round((weekendVideos / count) * 100) : 0
         }%`,
-        "Первое видео": count > 0 ? this.formatDate(startDate, timezone) : "-",
-        "Последнее видео": count > 0 ? this.formatDate(endDate, timezone) : "-",
+        // Добавляем строку прогноза в таблицу для ясности
+        "Прогноз на 365 дней": isPartial
+          ? `≈ ${finalHours} часов / ${finalVideos.toLocaleString()} видео`
+          : "Данные полные",
       },
       slideInfo: {
-        videoCount: count,
-        totalWatchTimeHours: totalHours,
-        watchSessions: sessions,
+        // ОТДАЕМ УЖЕ ПРОГНОЗНЫЕ ДАННЫЕ В СЛАЙДЫ
+        totalWatchTimeHours: finalHours, // Прогноз
+        videoCount: finalVideos, // Прогноз
+        watchSessions: finalSessions, // Прогноз
+
+        // Оригинальные данные (если понадобятся)
+        realHours: totalHours,
+
         averageSessionLength:
-          sessions > 0 ? Math.round(totalMinutes / sessions) : 0,
+          realSessions > 0 ? Math.round(totalMinutes / realSessions) : 0,
         mostActiveWeekday: count > 0 ? favDay.substring(0, 3) : "-",
         hourlyActivity: hourlyActivity,
         monthlyActivity: monthlyActivity,
@@ -207,7 +228,6 @@ const TikTokAnalyzer = {
         dailyAverage: dailyAvg,
         dateRange: dateRangeString,
         isPartialData: isPartial,
-        // Важно: возвращаем даты для фильтрации лайков
         realStartDate: startDate,
         realEndDate: endDate,
       },
