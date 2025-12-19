@@ -93,6 +93,51 @@ body {
   margin-top: 60px;
 }
 
+/* --- DONATE BUTTON (HEADER) --- */
+.donate-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.donate-btn i {
+  color: #ffdd00; /* Желтый цвет кофе/монетки */
+  font-size: 1.1rem;
+}
+
+.donate-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 221, 0, 0.2);
+  border-color: #ffdd00;
+}
+
+/* Адаптив для мобильных (Скрываем текст, оставляем иконку) */
+@media (max-width: 600px) {
+  .donate-btn span {
+    display: none; /* Убираем слово "Поддержать" */
+  }
+  .donate-btn {
+    padding: 8px; /* Делаем квадратной/круглой */
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    justify-content: center;
+  }
+  .donate-btn i {
+    margin: 0;
+  }
+}
+
 /* --- CONTAINER --- */
 .container {
   max-width: 1200px;
