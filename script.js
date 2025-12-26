@@ -171,6 +171,21 @@ function processJsonText(jsonText) {
   }
 }
 
+function showResultAds() {
+  // Проверяем, загрузился ли Яндекс и не запущен ли блок уже
+  if (
+    window.yaContextCb &&
+    !document.getElementById("yandex_rtb_R-A-18304330-2").innerHTML
+  ) {
+    window.yaContextCb.push(() => {
+      Ya.Context.AdvManager.render({
+        blockId: "R-A-18304330-2", // Твой ID блока (Под результатами)
+        renderTo: "yandex_rtb_R-A-18304330-2",
+      });
+    });
+  }
+}
+
 // --- Генерация UI результатов ---
 function prepareSlidesAndTable(stats, year) {
   // 0. Таблица (как было)
@@ -1063,21 +1078,6 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => (slidesModal.style.display = "none"), 300);
     }
   };
-
-  function showResultAds() {
-    // Проверяем, загрузился ли Яндекс и не запущен ли блок уже
-    if (
-      window.yaContextCb &&
-      !document.getElementById("yandex_rtb_R-A-18304330-2").innerHTML
-    ) {
-      window.yaContextCb.push(() => {
-        Ya.Context.AdvManager.render({
-          blockId: "R-A-18304330-2", // Твой ID блока (Под результатами)
-          renderTo: "yandex_rtb_R-A-18304330-2",
-        });
-      });
-    }
-  }
 
   // Демо режим
   demoButton?.addEventListener("click", () => {
