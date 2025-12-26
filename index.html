@@ -142,6 +142,12 @@
       </div>
     </noscript>
     <!-- /Yandex.Metrika counter -->
+
+    <!-- Yandex.RTB -->
+    <script>
+      window.yaContextCb = window.yaContextCb || [];
+    </script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -1237,5 +1243,15 @@
         </div>
       </div>
     </div>
+    <!-- Yandex.RTB R-A-18304330-3 -->
+    <script>
+      window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+          blockId: "R-A-18304330-3",
+          type: "floorAd",
+          platform: "touch",
+        });
+      });
+    </script>
   </body>
 </html>
