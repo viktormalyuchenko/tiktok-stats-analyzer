@@ -55,6 +55,7 @@ function hideModal(el) {
 }
 
 function resetToInitialState() {
+  fullscreenAdShown = false;
   currentAnalysisResult = null;
   generatedBlobs = [];
   cachedSlidesBlobs = null;
