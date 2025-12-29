@@ -184,6 +184,15 @@ function showResultAds() {
       });
     });
   }
+  if (window.yaContextCb) {
+    window.yaContextCb.push(() => {
+      Ya.Context.AdvManager.render({
+        blockId: "R-A-18304330-4", // <-- ТВОЙ НОВЫЙ ID ИЗ РСЯ
+        type: "fullscreen",
+        platform: "touch",
+      });
+    });
+  }
 }
 
 // --- Генерация UI результатов ---
