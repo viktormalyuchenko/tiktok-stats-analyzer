@@ -171,27 +171,34 @@ function processJsonText(jsonText) {
   }
 }
 
+let fullscreenAdShown = false;
+
 function showResultAds() {
-  // Проверяем, загрузился ли Яндекс и не запущен ли блок уже
-  if (
-    window.yaContextCb &&
-    !document.getElementById("yandex_rtb_R-A-18304330-2").innerHTML
-  ) {
+  if (!window.yaContextCb) return;
+
+  // 1. Баннер в ленте (Под шапкой или в сетке)
+  // Проверяем, пустой ли блок, чтобы не дублировать
+  const inlineBlock = document.getElementById("yandex_rtb_R-A-18304330-2");
+  if (inlineBlock && !inlineBlock.innerHTML) {
     window.yaContextCb.push(() => {
       Ya.Context.AdvManager.render({
-        blockId: "R-A-18304330-2", // Твой ID блока (Под результатами)
+        blockId: "R-A-18304330-2",
         renderTo: "yandex_rtb_R-A-18304330-2",
       });
     });
   }
-  if (window.yaContextCb) {
+
+  // 2. Полноэкранный баннер (Самый дорогой)
+  // Показываем, если еще не показывали в этой сессии
+  if (!fullscreenAdShown) {
     window.yaContextCb.push(() => {
       Ya.Context.AdvManager.render({
-        blockId: "R-A-18304330-4", // <-- ТВОЙ НОВЫЙ ID ИЗ РСЯ
+        blockId: "R-A-18304330-4",
         type: "fullscreen",
-        platform: "touch",
+        platform: "touch", // Важно для мобилок
       });
     });
+    fullscreenAdShown = true;
   }
 }
 
