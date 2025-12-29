@@ -21,6 +21,12 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
 
+    <!-- Yandex.RTB -->
+    <script>
+      window.yaContextCb = window.yaContextCb || [];
+    </script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
       (function (m, e, t, r, i, k, a) {
@@ -95,6 +101,17 @@
             я лайкал? Сколько времени я провел в приложении?
           </li>
         </ol>
+
+        <!-- Yandex.RTB R-A-18304330-1 -->
+        <div id="yandex_rtb_R-A-18304330-1"></div>
+        <script>
+          window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+              blockId: "R-A-18304330-1",
+              renderTo: "yandex_rtb_R-A-18304330-1",
+            });
+          });
+        </script>
 
         <p>Давайте разберемся, как получить данные в обоих случаях.</p>
 
@@ -178,5 +195,15 @@
     <footer>
       <p>TikTok Stats Analyzer © 2025</p>
     </footer>
+    <!-- Yandex.RTB R-A-18304330-3 -->
+    <script>
+      window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+          blockId: "R-A-18304330-3",
+          type: "floorAd",
+          platform: "touch",
+        });
+      });
+    </script>
   </body>
 </html>
