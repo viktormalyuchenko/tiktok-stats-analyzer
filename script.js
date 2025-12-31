@@ -131,7 +131,7 @@ function processJsonText(jsonText) {
   try {
     updateStatus("Анализ данных...", "loading");
     const rawData = JSON.parse(jsonText);
-    const selectedYear = new Date().getFullYear();
+    const selectedYear = 2025;
 
     // ВЫЗОВ ANALYZER.JS
     if (typeof TikTokAnalyzer === "undefined")
